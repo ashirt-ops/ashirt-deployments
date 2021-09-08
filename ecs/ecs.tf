@@ -172,9 +172,8 @@ resource "aws_ecs_task_definition" "frontend" {
   task_role_arn      = aws_iam_role.web.arn
   container_definitions = jsonencode([
     {
-      name = "${var.app_name}-frontend"
-      #image     = "ashirt/frontend:${var.tag}"
-      image     = "jkennedyvz/frontend:latest"
+      name      = "${var.app_name}-frontend"
+      image     = "ashirt/frontend:${var.tag}"
       cpu       = var.cpu
       memory    = var.mem
       essential = true
@@ -212,7 +211,7 @@ resource "aws_ecs_task_definition" "frontend" {
   ]
 }
 
-# DB init task. Runs once, and anytime you change the image tag to apply sql migrations.
+# DB init task. Runs once, and anytime you change the global tag to apply sql migrations.
 
 resource "aws_ecs_task_definition" "init" {
   family             = "init"
@@ -221,7 +220,7 @@ resource "aws_ecs_task_definition" "init" {
   container_definitions = jsonencode([
     {
       name      = "${var.app_name}-init"
-      image     = "jkennedyvz/ashirt-init"
+      image     = "ashirt/init:${var.tag}"
       cpu       = var.cpu
       memory    = var.mem
       essential = true
