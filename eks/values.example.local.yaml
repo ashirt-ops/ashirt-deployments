@@ -1,0 +1,26 @@
+frontend:
+  api:
+    env:
+      APP_PORT: "8000"
+      APP_IMGSTORE_REGION: "us-west-2"
+      APP_IMGSTORE_BUCKET_NAME: "<my-evidence-bucket>"
+      AUTH_SERVICES: "ashirt"
+      AUTH_OKTA_CLIENT_ID: ""
+      AUTH_OKTA_ISSUER: ""
+      AUTH_OKTA_BACKEND_URL: ""
+      AUTH_OKTA_SUCCESS_REDIRECT_URL: ""
+      AUTH_OKTA_FAILURE_REDIRECT_URL_PREFIX: ""
+      AUTH_OKTA_PROFILE_TO_SHORTNAME_FIELD: ""
+      AUTH_SERVICES_ALLOW_REGISTRATION: "ashirt"
+    s3IAMRole: "arn:aws:iam::<account-id>:role/ashirt-k8s-s3"
+  lb:
+    acmCert: "arn:aws:acm:us-west-2:<account-id>:certificate/<cert-uuid>"
+public:
+  api:
+    env:
+      APP_PORT: "8000"
+      APP_IMGSTORE_REGION: "us-west-2"
+      APP_IMGSTORE_BUCKET_NAME: "<my-evidence-bucket>"
+    s3IAMRole: "arn:aws:iam::<account-id>:role/ashirt-k8s-s3-public"
+  lb:
+    acmCert: "arn:aws:acm:us-west-2:<account-id>:certificate/<cert-uuid>"
