@@ -2,10 +2,10 @@
 # MUST UPDATE ############
 ##########################
 
-# Repository hash is used to target a snapshot of the rolling update. `latest` may be used, but is not recommended. 
+# Repository hash (sha-1234567) or pr tag (pr-386) is used to target a snapshot of the rolling update. `latest` may be used, but is not recommended.
 variable "tag" {
   type    = string
-  default = "sha-47ce806"
+  default = "sha-6ab44d2"
 }
 # Database password
 variable "db_password" {
