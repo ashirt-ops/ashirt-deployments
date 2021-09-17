@@ -17,8 +17,20 @@ Review `variables.tf` for mandatory and optional changes.
 
 Review `.env.web` and configure as desired per https://github.com/theparanoids/ashirt-server/wiki/backendconfig
 
+# Init
+
+```
+cd ecs/
+terraform init
+```
+
 # Install
 
 ```
 terraform apply --auto-approve
+```
+
+# Destroy ashirt
+```
+terraform destroy
 ```

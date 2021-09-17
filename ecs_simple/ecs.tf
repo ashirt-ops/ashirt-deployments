@@ -26,7 +26,7 @@ resource "aws_ecs_service" "ashirt-web" {
 
   network_configuration {
     security_groups = ["${aws_security_group.web-ecs.id}"]
-    subnets         = aws_subnet.private.*.id
+    subnets         = aws_subnet.public.*.id
   }
 }
 
@@ -96,7 +96,7 @@ resource "aws_ecs_service" "ashirt-api" {
 
   network_configuration {
     security_groups = ["${aws_security_group.api-ecs.id}"]
-    subnets         = aws_subnet.private.*.id
+    subnets         = aws_subnet.public.*.id
   }
 }
 
@@ -162,7 +162,7 @@ resource "aws_ecs_service" "ashirt-frontend" {
 
   network_configuration {
     security_groups = ["${aws_security_group.frontend-ecs.id}"]
-    subnets         = aws_subnet.private.*.id
+    subnets         = aws_subnet.public.*.id
   }
 }
 
@@ -256,7 +256,7 @@ resource "aws_ecs_task_definition" "init" {
 
 resource "null_resource" "ecs-run-task-init" {
   provisioner "local-exec" {
-    command = "aws ecs run-task --task-definition ${aws_ecs_task_definition.init.arn} --cluster ${aws_ecs_cluster.ashirt.arn} --launch-type FARGATE --network-configuration \"awsvpcConfiguration={subnets=[${join(",", aws_subnet.private.*.id)}],securityGroups=[${aws_security_group.api-ecs.id}],assignPublicIp=DISABLED}\""
+    command = "aws ecs run-task --task-definition ${aws_ecs_task_definition.init.arn} --cluster ${aws_ecs_cluster.ashirt.arn} --launch-type FARGATE --network-configuration \"awsvpcConfiguration={subnets=[${join(",", aws_subnet.public.*.id)}],securityGroups=[${aws_security_group.api-ecs.id}],assignPublicIp=DISABLED}\" --region ${var.region}"
   }
   depends_on = [aws_rds_cluster.ashirt]
   triggers = {

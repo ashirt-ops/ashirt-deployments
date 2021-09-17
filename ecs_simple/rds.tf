@@ -20,5 +20,5 @@ resource "aws_rds_cluster" "ashirt" {
 
 resource "aws_db_subnet_group" "default" {
   name       = "${var.app_name}-main"
-  subnet_ids = aws_subnet.private.*.id
+  subnet_ids = aws_subnet.public.*.id
 }

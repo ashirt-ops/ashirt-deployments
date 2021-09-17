@@ -20,7 +20,7 @@ resource "aws_eip" "ngw" {
 }
 
 resource "aws_nat_gateway" "ngw" {
-  count         = var.az_count
+  count         = var.private_subnet ? var.az_count : 0
   subnet_id     = aws_subnet.public[count.index].id
   allocation_id = aws_eip.ngw[count.index].id
 }
@@ -28,7 +28,7 @@ resource "aws_nat_gateway" "ngw" {
 # Routes
 
 resource "aws_route_table" "private" {
-  count  = var.az_count
+  count  = var.private_subnet ? var.az_count : 0
   vpc_id = aws_vpc.ashirt.id
   route {
     cidr_block     = "0.0.0.0/0"
@@ -47,7 +47,7 @@ resource "aws_subnet" "public" {
 }
 
 resource "aws_subnet" "private" {
-  count             = var.az_count
+  count             = var.private_subnet ? var.az_count : 0
   availability_zone = data.aws_availability_zones.az.names[count.index]
   vpc_id            = aws_vpc.ashirt.id
   cidr_block        = cidrsubnet(aws_vpc.ashirt.cidr_block, 8, var.az_count + count.index)
@@ -63,7 +63,7 @@ resource "aws_route" "internet_access" {
 }
 
 resource "aws_route_table_association" "private_subnet" {
-  count          = var.az_count
+  count          = var.private_subnet ? var.az_count : 0
   subnet_id      = aws_subnet.private[count.index].id
   route_table_id = aws_route_table.private[count.index].id
 }
@@ -73,7 +73,7 @@ resource "aws_route_table_association" "private_subnet" {
 resource "aws_lb" "web" {
   name            = "${var.app_name}-web"
   internal        = true
-  subnets         = aws_subnet.private.*.id
+  subnets         = var.private_subnet ? aws_subnet.private.*.id : aws_subnet.public.*.id
   security_groups = [aws_security_group.web-lb.id]
   tags = {
     Name = var.app_name
