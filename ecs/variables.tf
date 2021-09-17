@@ -31,6 +31,12 @@ variable "envbucket" {
 ##########################
 # MAY UPDATE #############
 ##########################
+# Enable Maintenance mode. This provisions an EC2 host that can access the database
+variable "maintenance_mode" {
+  type    = bool
+  default = true
+}
+
 # Do you want things in private subnets?
 variable "private_subnet" {
   type    = bool
@@ -70,6 +76,10 @@ variable "allow_frontend_cidrs" {
   default = ["0.0.0.0/0"]
 }
 variable "allow_api_cidrs" {
+  type    = list(string)
+  default = ["0.0.0.0/0"]
+}
+variable "allow_maintenance_cidrs" {
   type    = list(string)
   default = ["0.0.0.0/0"]
 }
