@@ -68,8 +68,8 @@ resource "aws_route_table_association" "private_subnet" {
   route_table_id = aws_route_table.private[count.index].id
 }
 
-resource "aws_network_acl" "main" {
-  vpc_id     = aws_vpc.main.id
+resource "aws_network_acl" "ashirt" {
+  vpc_id     = aws_vpc.ashirt.id
   subnet_ids = aws.private_subnet ? concat(aws_subnet.private.*.id, aws_subnet.public.*.id) : aws_subnet.public.*.id
   egress = [
     {
