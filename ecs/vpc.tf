@@ -68,6 +68,60 @@ resource "aws_route_table_association" "private_subnet" {
   route_table_id = aws_route_table.private[count.index].id
 }
 
+resource "aws_network_acl" "main" {
+  vpc_id     = aws_vpc.main.id
+  subnet_ids = aws.private_subnet ? concat(aws_subnet.private.*.id, aws_subnet.public.*.id) : aws_subnet.public.*.id
+  egress = [
+    {
+      protocol   = "-1"
+      rule_no    = 100
+      action     = "allow"
+      cidr_block = "0.0.0.0/0"
+      from_port  = 0
+      to_port    = 0
+    }
+  ]
+
+  ingress = [
+    {
+      protocol   = "tcp"
+      rule_no    = 100
+      action     = "allow"
+      cidr_block = "0.0.0.0/0"
+      from_port  = 443
+      to_port    = 443
+    },
+    {
+      protocol   = "tcp"
+      rule_no    = 110
+      action     = "allow"
+      cidr_block = aws_vpc.main.cidr_block
+      from_port  = 8080
+      to_port    = 8080
+    },
+    {
+      protocol   = "tcp"
+      rule_no    = 120
+      action     = "allow"
+      cidr_block = aws_vpc.main.cidr_block
+      from_port  = 8000
+      to_port    = 8000
+    },
+    {
+      protocol   = "tcp"
+      rule_no    = 130
+      action     = "allow"
+      cidr_block = "0.0.0.0/0"
+      from_port  = 1024
+      to_port    = 65535
+    }
+  ]
+
+  tags = {
+    Name = "${var.app_name}-main"
+  }
+}
+
 #Load Balancers
 
 resource "aws_lb" "web" {

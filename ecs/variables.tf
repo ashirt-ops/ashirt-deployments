@@ -34,7 +34,7 @@ variable "envbucket" {
 # Enable Maintenance mode. This provisions an EC2 host that can access the database
 variable "maintenance_mode" {
   type    = bool
-  default = true
+  default = false
 }
 
 # Do you want things in private subnets?
