@@ -70,56 +70,65 @@ resource "aws_route_table_association" "private_subnet" {
 
 resource "aws_network_acl" "ashirt" {
   vpc_id     = aws_vpc.ashirt.id
-  subnet_ids = aws.private_subnet ? concat(aws_subnet.private.*.id, aws_subnet.public.*.id) : aws_subnet.public.*.id
-  egress = [
-    {
-      protocol   = "-1"
-      rule_no    = 100
-      action     = "allow"
-      cidr_block = "0.0.0.0/0"
-      from_port  = 0
-      to_port    = 0
-    }
-  ]
-
-  ingress = [
-    {
-      protocol   = "tcp"
-      rule_no    = 100
-      action     = "allow"
-      cidr_block = "0.0.0.0/0"
-      from_port  = 443
-      to_port    = 443
-    },
-    {
-      protocol   = "tcp"
-      rule_no    = 110
-      action     = "allow"
-      cidr_block = aws_vpc.main.cidr_block
-      from_port  = 8080
-      to_port    = 8080
-    },
-    {
-      protocol   = "tcp"
-      rule_no    = 120
-      action     = "allow"
-      cidr_block = aws_vpc.main.cidr_block
-      from_port  = 8000
-      to_port    = 8000
-    },
-    {
-      protocol   = "tcp"
-      rule_no    = 130
-      action     = "allow"
-      cidr_block = "0.0.0.0/0"
-      from_port  = 1024
-      to_port    = 65535
-    }
-  ]
-
+  subnet_ids = var.private_subnet ? concat(aws_subnet.private.*.id, aws_subnet.public.*.id) : aws_subnet.public.*.id
   tags = {
     Name = "${var.app_name}-main"
   }
+}
+
+resource "aws_network_acl_rule" "egress" {
+  network_acl_id = aws_network_acl.ashirt.id
+  rule_number    = 100
+  egress         = true
+  protocol       = "-1"
+  rule_action    = "allow"
+  cidr_block     = "0.0.0.0/0"
+  from_port      = 0
+  to_port        = 0
+}
+
+resource "aws_network_acl_rule" "ingress-443" {
+  network_acl_id = aws_network_acl.ashirt.id
+  rule_number    = 110
+  egress         = false
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = "0.0.0.0/0"
+  from_port      = 443
+  to_port        = 443
+}
+
+resource "aws_network_acl_rule" "ingress-8080" {
+  network_acl_id = aws_network_acl.ashirt.id
+  rule_number    = 120
+  egress         = false
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = aws_vpc.ashirt.cidr_block
+  from_port      = 8000
+  to_port        = 8000
+}
+
+resource "aws_network_acl_rule" "ingress-8000" {
+  network_acl_id = aws_network_acl.ashirt.id
+  rule_number    = 130
+  egress         = false
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = aws_vpc.ashirt.cidr_block
+  from_port      = 8080
+  to_port        = 8080
+}
+
+resource "aws_network_acl_rule" "ingress-return" {
+  network_acl_id = aws_network_acl.ashirt.id
+  rule_number    = 140
+  egress         = false
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = "0.0.0.0/0"
+  from_port      = 1024
+  to_port        = 65535
 }
 
 #Load Balancers
