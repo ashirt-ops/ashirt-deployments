@@ -5,7 +5,7 @@ A serverless deployment of ashirt-server.
 
 Latest version of terraform
 
-```
+```sh
 brew install terraform
 ```
 
@@ -19,18 +19,19 @@ Review `.env.web` and configure as desired per https://github.com/theparanoids/a
 
 # Init
 
-```
+```sh
 cd ecs/
 terraform init
 ```
 
 # Install
 
-```
+```sh
 terraform apply --auto-approve
 ```
 
 # Destroy ashirt
-```
+
+```sh
 terraform destroy
 ```
