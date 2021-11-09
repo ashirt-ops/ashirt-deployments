@@ -1,0 +1,29 @@
+frontend:
+  api:
+    env:
+      APP_PORT: ""
+      APP_IMGSTORE_REGION: "" 
+      APP_IMGSTORE_BUCKET_NAME: ""
+      AUTH_SERVICES: ""
+      AUTH_OKTA_CLIENT_ID: ""
+      AUTH_OKTA_ISSUER: ""
+      AUTH_OKTA_BACKEND_URL: ""
+      AUTH_OKTA_SUCCESS_REDIRECT_URL: ""
+      AUTH_OKTA_FAILURE_REDIRECT_URL_PREFIX: ""
+      AUTH_OKTA_PROFILE_TO_SHORTNAME_FIELD: ""
+      AUTH_SERVICES_ALLOW_REGISTRATION: ""
+      #ADDITIONAL_FREEFORM_ENVIRONMENT_VARIABLE https://github.com/theparanoids/ashirt-server/blob/cf8cfb2f57511986c2cdc00605a0f6b64ae20dbb/backend/Readme.md
+    s3IAMRole: ""
+  lb:
+    acmCert: ""
+    extraSg: ""
+public:
+  api:
+    env:
+      APP_PORT: ""
+      APP_IMGSTORE_REGION: ""
+      APP_IMGSTORE_BUCKET_NAME: ""
+      #ADDITIONAL_FREEFORM_ENVIRONMENT_VARIABLE
+    s3IAMRole: ""
+  lb:
+    acmCert: ""

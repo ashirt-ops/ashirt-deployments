@@ -1,0 +1,122 @@
+---
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: &app-name ashirt-public
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: eks-public-user
+  namespace: ashirt-public
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: public-editor
+  namespace: ashirt-public
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: edit
+subjects:
+- kind: ServiceAccount
+  name: eks-public-user
+  namespace: ashirt-public
+---
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  namespace: ashirt-public
+  name: ashitr.restrictive
+  annotations:
+    seccomp.security.alpha.kubernetes.io/allowedProfileNames: 'docker/default,runtime/default'
+    seccomp.security.alpha.kubernetes.io/defaultProfileName:  'runtime/default'
+    # Not adding app armour because it is breaking + in alpha
+spec:
+  readOnlyRootFilesystem: true
+  privileged: false
+  allowPrivilegeEscalation: false
+  # Extra supa defense over 9000
+  requiredDropCapabilities:
+    - ALL
+  runAsUser:
+    rule: 'MustRunAs'
+    ranges:
+      - min: 10000
+        max: 65535
+  supplementalGroups:
+    rule: 'MustRunAs'
+    ranges:
+      - min: 10000
+        max: 65535
+  # runAsGroup for "containers" spec does not change gid in container. Right now it defaults to zero
+  # Good as Defense in depth with other primitives
+  # https://github.com/kubernetes/enhancements/issues/213
+  # This should be pushed 8/29 in k8s 1.16 release
+  # Expect updated for this by q4 [FYI]
+  # Pod security policy for  spec.RunAsGroup starts from 1.14 in amazon EKS
+  # Currently cluster only supports 1.13 (Once it is 1.14 - should be auto applied)
+  runAsGroup:
+    rule: 'MustRunAs'
+    ranges:
+      - min: 10000
+        max: 65535
+  fsGroup:
+    rule: 'MustRunAs'
+    ranges:
+      - min: 10000
+        max: 65535
+  seLinux:
+    rule: 'RunAsAny'
+  volumes:
+  - configMap
+  - emptyDir
+  - secret
+  hostNetwork: false
+  hostIPC: false
+  hostPID: false
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: psp:unprivileged
+  namespace: ashirt-public
+rules:
+- apiGroups:
+  - extensions
+  resourceNames:
+  - ashirt.restrictive
+  resources:
+  - podsecuritypolicies
+  verbs:
+  - use
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: eks-public-user:psp:unprivileged
+  namespace: ashirt-public
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: psp:unprivileged
+subjects:
+- kind: ServiceAccount
+  name: eks-public-user
+  namespace: ashirt-public
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: default:psp:unprivileged
+  namespace: ashirt-public
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: psp:unprivileged
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: ashirt-public
+

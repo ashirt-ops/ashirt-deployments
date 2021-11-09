@@ -1,0 +1,166 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: ashirt-privateapi-deployment
+  namespace: ashirt-frontend
+  labels:
+    app: &app-name ashirt-private-api
+    role: privateapi
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: *app-name
+  template:
+    metadata:
+      labels:
+        app: *app-name
+      annotations:
+        iam.amazonaws.com/role: {{ .Values.frontend.api.s3IAMRole | quote }}
+    spec:
+      containers:
+      - name: *app-name
+        image: ashirt/web:{{ .Values.tag | default "latest" }}
+        env:
+        # Unpack all frontend api env vars
+        {{- range $key, $value := .Values.frontend.api.env }}
+        - name: {{ $key }}
+          value: {{ $value | quote }}
+        {{- end }}
+        - name: DB_URI
+          valueFrom:
+            secretKeyRef:
+              name: dsn-private
+              key: dsn
+        - name: APP_CSRF_AUTH_KEY
+          valueFrom:
+            secretKeyRef:
+              name: csrf-auth-key
+              key: csrf-auth-key
+        - name: APP_SESSION_STORE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: session-store-key
+              key: session-store-key
+        - name: AUTH_OKTA_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: auth-okta-client-secret
+              key: auth-okta-client-secret
+        volumeMounts:
+        - mountPath: /tmp
+          name: cache-volume
+        ports:
+        - name: "http-server"
+          containerPort: {{ .Values.frontend.api.env.APP_PORT }}
+      volumes:
+      - name: cache-volume
+        emptyDir:
+          medium: Memory
+          sizeLimit: 256Mi
+      securityContext:
+        runAsUser: 10000
+        runAsGroup: 10000
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ashirt-private-service
+  namespace: ashirt-frontend
+  labels:
+    app: &app-name ashirt-private-api
+spec:
+  type: NodePort
+  ports:
+  - port: 8000
+    protocol: TCP
+    name: http
+  selector:
+    app: *app-name
+---    
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: private-api-allow-frontend
+  namespace: ashirt-frontend
+spec:
+  podSelector:
+    matchLabels:
+      app: ashirt-privateapi
+      role: privateapi
+  ingress:
+    - from:
+      - podSelector:           # chooses pods with app = ashirt-frontend-deployment
+          matchLabels:
+            app: ashirt-frontend
+            role: frontend
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata: 
+  name: ashirt-frontend-deployment
+  namespace: ashirt-frontend
+  labels:
+    app: &app-name ashirt-frontend
+    role: frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: *app-name
+  template:
+    metadata:
+      labels:
+        app: *app-name
+    spec:
+      # Disable mounting of serviceaccount tokens/ extra hardening
+      automountServiceAccountToken: false 
+      containers:
+      - name: *app-name
+        image: ashirt/frontend:{{ .Values.tag | default "latest" }}
+        volumeMounts:
+        - mountPath: /var/cache/nginx/
+          name: cache-volume
+        - mountPath: /var/log/nginx
+          name: nginx-tmp
+        ports:
+        - name: "http-server"
+          containerPort: 8080
+      volumes:
+      - name: cache-volume
+        emptyDir:
+          medium: Memory
+          sizeLimit: 256Mi
+      - name: nginx-tmp
+        emptyDir:
+          medium: Memory
+          sizeLimit: 256Mi
+      securityContext:
+        runAsUser: 10000
+        runAsGroup: 10000
+      restartPolicy: Always
+---
+# service.beta.kubernetes.io/aws-load-balancer-ssl-cert needs to point to your already issued cert
+# which should be in AWS ACM for whatever domain etc
+kind: Service
+apiVersion: v1
+metadata:
+  name: frontend-lb
+  namespace: ashirt-frontend
+  labels:
+    app: &app-name ashirt-frontend
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: {{ .Values.frontend.lb.acmCert | quote }}
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
+    service.beta.kubernetes.io/aws-load-balancer-access-log-enabled: "true"
+    service.beta.kubernetes.io/aws-load-balancer-access-log-emit-interval: "5"
+    # Choose pre-populated sg so that k8s does not allow all traffic
+    service.beta.kubernetes.io/aws-load-balancer-extra-security-groups: {{ .Values.frontend.lb.extraSg | quote }}    
+spec:
+  ports:
+  - port: 443
+    targetPort: http-server
+  selector:
+    app: *app-name
+  type: LoadBalancer

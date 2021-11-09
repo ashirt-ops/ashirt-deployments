@@ -1,0 +1,73 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: ashirt-publicapi-deployment
+  namespace: ashirt-public
+  labels:
+    app: &app-name ashirt-publicapi
+    role: publicapi
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: *app-name
+  template:
+    metadata:
+      labels:
+        app: *app-name
+      annotations:
+        iam.amazonaws.com/role: {{ .Values.public.api.s3IAMRole | quote }}
+    spec:
+      # Disable mounting of serviceaccount tokens/ extra hardening
+      #automountServiceAccountToken: false 
+      containers:
+      - name: *app-name
+        image: ashirt/api:{{ .Values.tag | default "latest" }}
+        env:
+        # Unpack all public api env vars
+        {{- range $key, $value := .Values.public.api.env }}
+        - name: {{ $key }}
+          value: {{ $value | quote }}
+        {{- end }}
+        - name: DB_URI
+          valueFrom:
+            secretKeyRef:
+              name: dsn-public-api
+              key: dsn-public
+        volumeMounts:
+        - mountPath: /tmp
+          name: cache-volume
+        ports:
+        - name: "http-server"
+          containerPort: {{ .Values.public.api.env.APP_PORT }}
+      volumes:
+      - name: cache-volume
+        emptyDir:
+          medium: Memory
+          sizeLimit: 256Mi
+      securityContext:
+        runAsUser: 10000
+        runAsGroup: 10000
+      restartPolicy: Always
+---
+# service.beta.kubernetes.io/aws-load-balancer-ssl-cert needs to point to your already issued cert
+# which should be in AWS ACM for whatever domain etc
+kind: Service
+apiVersion: v1
+metadata:
+  name: public-lb
+  namespace: ashirt-public
+  labels:
+    app: public-lb
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: {{ .Values.public.lb.acmCert }}
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
+    service.beta.kubernetes.io/aws-load-balancer-access-log-enabled: "true"
+    service.beta.kubernetes.io/aws-load-balancer-access-log-emit-interval: "5"    
+spec:
+  ports:
+  - port: 443
+    targetPort: http-server
+  selector:
+    app: ashirt-publicapi
+  type: LoadBalancer
