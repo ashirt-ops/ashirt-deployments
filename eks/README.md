@@ -102,7 +102,7 @@ mysql -h {{RDS_HOST}}.us-west-2.compute.amazonaws.com -u <username> -p <password
 
 ### Setup Calico
 
-Install calico which is a network policy engine for amazon's EKS.This is needed later for allowing/denying traffic to certain pods etc.
+Install calico which is a network policy engine for amazon's EKS. This is needed later for allowing/denying traffic to certain pods etc.
 `kubectl apply -f https://raw.githubusercontent.com/aws/amazon-vpc-cni-k8s/master/config/v1.6/calico.yaml`
 
 ### Install Application
