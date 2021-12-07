@@ -259,7 +259,14 @@ resource "aws_ecs_task_definition" "init" {
 
 resource "null_resource" "ecs-run-task-init" {
   provisioner "local-exec" {
-    command = "aws ecs run-task --task-definition ${aws_ecs_task_definition.init.arn} --cluster ${aws_ecs_cluster.ashirt.arn} --launch-type FARGATE --network-configuration \"awsvpcConfiguration={subnets=[${join(",", var.private_subnet ? aws_subnet.private.*.id : aws_subnet.public.*.id)}],securityGroups=[${aws_security_group.api-ecs.id}],assignPublicIp=${var.private_subnet ? "DISABLED" : "ENABLED"}}\""
+    command = <<EOT
+aws ecs run-task \
+--task-definition ${aws_ecs_task_definition.init.arn} \
+--cluster ${aws_ecs_cluster.ashirt.arn} \
+--launch-type FARGATE \
+--network-configuration 'awsvpcConfiguration={subnets=[${join(",", var.private_subnet ? aws_subnet.private.*.id : aws_subnet.public.*.id)}],securityGroups=[${aws_security_group.api-ecs.id}],assignPublicIp=${var.private_subnet ? "DISABLED" : "ENABLED"}}' \
+--region ${var.region}
+EOT
   }
   depends_on = [aws_rds_cluster.ashirt]
   triggers = {

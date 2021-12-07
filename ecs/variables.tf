@@ -7,11 +7,6 @@ variable "tag" {
   type    = string
   default = "sha-6ab44d2"
 }
-# Database password
-variable "db_password" {
-  type    = string
-  default = "ashirt_is_the_best"
-}
 # Public domain name for application. This must be registered with route53, with a primary public zone created.
 variable "domain" {
   type        = string

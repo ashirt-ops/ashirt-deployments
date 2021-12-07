@@ -1,11 +1,16 @@
 # RDS Cluster and subnet group
 
+resource "random_password" "db_password" {
+  length  = 16
+  special = true
+}
+
 resource "aws_rds_cluster" "ashirt" {
   cluster_identifier        = "ashirt"
   engine                    = "aurora-mysql"
   database_name             = "ashirt"
   master_username           = "ashirt"
-  master_password           = var.db_password
+  master_password           = random_password.db_password.result
   backup_retention_period   = 5
   preferred_backup_window   = "07:00-09:00"
   engine_mode               = "serverless"

@@ -52,7 +52,7 @@ resource "aws_s3_bucket_object" "webenv" {
 resource "aws_s3_bucket_object" "dbenv" {
   bucket  = aws_s3_bucket.env.id
   key     = "db/.env"
-  content = "DB_URI=ashirt:${var.db_password}@tcp(${aws_rds_cluster.ashirt.endpoint}:3306)/ashirt"
+  content = "DB_URI=ashirt:${random_password.db_password.result}@tcp(${aws_rds_cluster.ashirt.endpoint}:3306)/ashirt"
 }
 
 resource "aws_s3_bucket_object" "appenv" {
