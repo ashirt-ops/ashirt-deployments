@@ -1,8 +1,8 @@
 # RDS Cluster and subnet group
 
 resource "random_password" "db_password" {
-  length  = 16
-  special = true
+  length  = 24
+  special = false
 }
 
 resource "aws_rds_cluster" "ashirt" {
