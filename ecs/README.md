@@ -24,10 +24,6 @@ cd ecs/
 terraform init
 ```
 
-# Custom Configuration
-
-Most configuration in ashirt is provided by environment variables. Reference the documentation at https://github.com/theparanoids/ashirt-server/tree/main/backend for a full list of options, and customize .env.web accordingly.
-
 # Install
 
 ```sh
