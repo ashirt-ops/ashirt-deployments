@@ -1,5 +1,5 @@
 ##########################
-# MUST UPDATE ############
+# MUST UPDATE BELOW ######
 ##########################
 
 # Repository hash ( e.g. sha-1234567) or pr tag (e.g. pr-386) is used to target a snapshot of the rolling update. `latest` may be used, but is not recommended.
@@ -11,9 +11,9 @@ variable "tag" {
 variable "domain" {
   type        = string
   description = "Public domain name"
-  default     = "ashirt.example.com"
+  default     = "example.com"
 }
-# Bucket names for application data, and application environment configuration
+# s3 bucket names to be created for application data, and application environment configuration
 variable "appdata" {
   type    = string
   default = "my-ashirt-data"
@@ -23,8 +23,18 @@ variable "envbucket" {
   default = "my-ashirt-env"
 }
 
+# Service worker API keys added after initial user setup
+variable "worker_access_key" {
+  type    = string
+  default = ""
+}
+variable "worker_secret_key" {
+  type    = string
+  default = ""
+}
+
 ##########################
-# MAY UPDATE #############
+# MAY UPDATE BELOW #######
 ##########################
 # Enable Maintenance mode. This provisions an EC2 host that can access the database
 variable "maintenance_mode" {
@@ -91,14 +101,4 @@ variable "app_port" {
 variable "nginx_port" {
   type    = number
   default = 8080
-}
-
-variable "worker_access_key" {
-  type    = string
-  default = ""
-}
-
-variable "worker_secret_key" {
-  type    = string
-  default = ""
 }
