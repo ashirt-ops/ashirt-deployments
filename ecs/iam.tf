@@ -37,6 +37,16 @@ resource "aws_iam_role_policy_attachment" "ecsTaskExecutionRole-api" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
+resource "aws_iam_role_policy_attachment" "ecsLambdaExecutionRole-web" {
+  role       = aws_iam_role.web.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaRole"
+}
+
+resource "aws_iam_role_policy_attachment" "ecsLambdaExecutionRole-api" {
+  role       = aws_iam_role.api.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaRole"
+}
+
 # Give nginx and the web service access to environment variable files
 
 resource "aws_iam_policy" "webenv" {
@@ -124,7 +134,8 @@ resource "aws_iam_policy" "appdata" {
       {
         Effect = "Allow",
         Action = [
-          "s3:*"
+          "s3:GetObject",
+          "s3:PutObject"
         ],
         Resource = [
           "${aws_s3_bucket.data.arn}/*"

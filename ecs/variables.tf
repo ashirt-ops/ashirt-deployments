@@ -2,16 +2,16 @@
 # MUST UPDATE ############
 ##########################
 
-# Repository hash (sha-1234567) or pr tag (pr-386) is used to target a snapshot of the rolling update. `latest` may be used, but is not recommended.
+# Repository hash ( e.g. sha-1234567) or pr tag (e.g. pr-386) is used to target a snapshot of the rolling update. `latest` may be used, but is not recommended.
 variable "tag" {
   type    = string
-  default = "sha-6ab44d2"
+  default = "sha-bdb9f85"
 }
 # Public domain name for application. This must be registered with route53, with a primary public zone created.
 variable "domain" {
   type        = string
   description = "Public domain name"
-  default     = "myashirtdomain.com"
+  default     = "ashirt.example.com"
 }
 # Bucket names for application data, and application environment configuration
 variable "appdata" {
@@ -91,4 +91,14 @@ variable "app_port" {
 variable "nginx_port" {
   type    = number
   default = 8080
+}
+
+variable "worker_access_key" {
+  type    = string
+  default = ""
+}
+
+variable "worker_secret_key" {
+  type    = string
+  default = ""
 }
