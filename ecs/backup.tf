@@ -5,7 +5,7 @@ resource "aws_backup_vault" "ashirt" {
 }
 
 resource "aws_backup_plan" "backup" {
-  name = "ashirt_backups_plan"
+  name = "ashirt"
 
   rule {
     rule_name         = "ashirt_backups_rule"
@@ -42,7 +42,7 @@ resource "aws_iam_role_policy_attachment" "backup" {
 
 resource "aws_backup_selection" "backup" {
   iam_role_arn = aws_iam_role.backup.arn
-  name         = "ashirt_backups_selection"
+  name         = "ashirt"
   plan_id      = aws_backup_plan.backup.id
 
   resources = [
