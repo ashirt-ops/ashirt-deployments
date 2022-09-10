@@ -11,7 +11,7 @@ resource "aws_rds_cluster" "ashirt" {
   database_name             = "ashirt"
   master_username           = "ashirt"
   master_password           = random_password.db_password.result
-  backup_retention_period   = 14
+  backup_retention_period   = 35
   preferred_backup_window   = "07:00-09:00"
   engine_mode               = "serverless"
   vpc_security_group_ids    = [aws_security_group.rds.id]
