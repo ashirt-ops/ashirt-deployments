@@ -58,5 +58,5 @@ resource "aws_s3_bucket_object" "dbenv" {
 resource "aws_s3_bucket_object" "appenv" {
   bucket  = aws_s3_bucket.env.id
   key     = "app/.env"
-  content = "APP_PORT=${var.app_port}\nAPP_IMGSTORE_BUCKET_NAME=${var.appdata}\nAPP_IMGSTORE_REGION=${var.region}"
+  content = "APP_PORT=${var.app_port}\nSTORE_TYPE=s3\nSTORE_BUCKET=${var.appdata}\nSTORE_REGION=${var.region}"
 }
