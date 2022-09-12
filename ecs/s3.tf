@@ -74,6 +74,7 @@ STORE_TYPE=s3
 STORE_BUCKET=${var.appdata}
 STORE_REGION=${var.region}
 APP_IMGSTORE_REGION=${var.region}
+APP_IMGSTORE_BUCKET_NAME=${var.appdata}
 APP_CSRF_AUTH_KEY=${random_password.csrf_key.result}
 APP_SESSION_STORE_KEY=${random_password.session_key.result}
 APP_SUCCESS_REDIRECT_URL=https://${aws_route53_record.frontend.name}
