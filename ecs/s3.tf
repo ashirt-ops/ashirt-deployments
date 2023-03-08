@@ -42,20 +42,20 @@ resource "aws_s3_bucket" "data" {
 
 # Environment files
 
-resource "aws_s3_bucket_object" "webenv" {
+resource "aws_s3_object" "webenv" {
   bucket = aws_s3_bucket.env.id
   key    = "web/.env"
   source = ".env.web"
   etag   = filemd5(".env.web")
 }
 
-resource "aws_s3_bucket_object" "dbenv" {
+resource "aws_s3_object" "dbenv" {
   bucket  = aws_s3_bucket.env.id
   key     = "db/.env"
   content = "DB_URI=ashirt:${random_password.db_password.result}@tcp(${aws_rds_cluster.ashirt.endpoint}:3306)/ashirt"
 }
 
-resource "aws_s3_bucket_object" "appenv" {
+resource "aws_s3_object" "appenv" {
   bucket  = aws_s3_bucket.env.id
   key     = "app/.env"
   content = "APP_PORT=${var.app_port}\nAPP_IMGSTORE_BUCKET_NAME=${var.appdata}\nAPP_IMGSTORE_REGION=${var.region}"
