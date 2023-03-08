@@ -17,7 +17,7 @@ Register a domain in Route53 through the AWS console, or have a pre-existing dom
 
 Review `variables.tf` for mandatory and optional changes. You will need to add a base domain name e.g. `mydomain.com` and choose names for two new s3 buckets. 
 
-Review `.env.web` and configure as desired per https://github.com/theparanoids/ashirt-server/wiki/backendconfig. No changes are required for a simple deployment with local authetication. 
+Review `appconfig.tf` and configure as desired per https://github.com/theparanoids/ashirt-server/wiki/backendconfig. No changes are required for a simple deployment with local authetication.
 
 # Init
 

@@ -2,10 +2,10 @@
 # MUST UPDATE BELOW ######
 ##########################
 
-# Repository hash ( e.g. sha-1234567) or pr tag (e.g. pr-386) is used to target a snapshot of the rolling update. `latest` may be used, but is not recommended.
+# Repository hash ( e.g. sha-84dae8b) or pr tag (e.g. pr-678) is used to target a snapshot of the rolling update. `latest` may be used, but is not recommended.
 variable "tag" {
   type    = string
-  default = "sha-bdb9f85"
+  default = "sha-84dae8b"
 }
 # Public domain name for application. This must be registered with route53, with a primary public zone created.
 variable "domain" {
