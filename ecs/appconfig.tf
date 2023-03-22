@@ -9,7 +9,7 @@ resource "random_password" "session_key" {
   special = false
 }
 
-resource "aws_s3_bucket_object" "webenv" {
+resource "aws_s3_object" "webenv" {
   bucket  = aws_s3_bucket.env.id
   key     = "web/.env"
   content = <<EOT
@@ -50,7 +50,7 @@ EMAIL_SMTP_AUTH_TYPE=login
 EOT
 }
 
-resource "aws_s3_bucket_object" "appenv" {
+resource "aws_s3_object" "appenv" {
   bucket  = aws_s3_bucket.env.id
   key     = "app/.env"
   content = <<EOT
@@ -61,7 +61,7 @@ STORE_REGION=${var.region}
 EOT
 }
 
-resource "aws_s3_bucket_object" "dbenv" {
+resource "aws_s3_object" "dbenv" {
   bucket  = aws_s3_bucket.env.id
   key     = "db/.env"
   content = "DB_URI=ashirt:${random_password.db_password.result}@tcp(${aws_rds_cluster.ashirt.endpoint}:3306)/ashirt"
