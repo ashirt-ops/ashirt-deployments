@@ -5,7 +5,7 @@
 # Repository hash ( e.g. sha-84dae8b) or pr tag (e.g. pr-678) is used to target a snapshot of the rolling update. `latest` may be used, but is not recommended.
 variable "tag" {
   type    = string
-  default = "sha-84dae8b"
+  default = "sha-d8e6d60"
 }
 # Public domain name for application. This must be registered with route53, with a primary public zone created.
 variable "domain" {
@@ -16,13 +16,12 @@ variable "domain" {
 # s3 bucket names to be created for application data, and application environment configuration
 variable "appdata" {
   type    = string
-  default = "my-ashirt-data"
+  default = "example.com-data"
 }
-variable "envbucket" {
+variable "appenv" {
   type    = string
-  default = "my-ashirt-env"
+  default = "example.com-env"
 }
-
 # Service worker API keys added after initial user setup
 variable "worker_access_key" {
   type    = string
