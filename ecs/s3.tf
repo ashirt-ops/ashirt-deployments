@@ -2,7 +2,6 @@
 
 resource "aws_s3_bucket" "env" {
   bucket = var.envbucket
-  acl    = "private"
   tags = {
     Name = "${var.app_name}-env"
   }
@@ -20,9 +19,13 @@ resource "aws_s3_bucket" "env" {
   }
 }
 
+resource "aws_s3_bucket_acl" "env_acl" {
+  bucket = aws_s3_bucket.env.id
+  acl = "private"
+}
+
 resource "aws_s3_bucket" "data" {
   bucket        = var.appdata
-  acl           = "private"
   force_destroy = true
   tags = {
     Name = "${var.app_name}-data"
@@ -38,4 +41,9 @@ resource "aws_s3_bucket" "data" {
       }
     }
   }
+}
+
+resource "aws_s3_bucket_acl" "data_acl" {
+  bucket = aws_s3_bucket.data.id
+  acl = "private"
 }
