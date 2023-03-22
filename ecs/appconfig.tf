@@ -9,9 +9,9 @@ resource "random_password" "session_key" {
   special = false
 }
 
-resource "aws_s3_object" "webenv" {
-  bucket = aws_s3_bucket.env.id
-  key    = "web/.env"
+resource "aws_s3_bucket_object" "webenv" {
+  bucket  = aws_s3_bucket.env.id
+  key     = "web/.env"
   content = <<EOT
 # Add "google" to the two lists below if you want to set up google oidc
 AUTH_SERVICES=ashirt,webauthn
@@ -50,18 +50,18 @@ EMAIL_SMTP_AUTH_TYPE=login
 EOT
 }
 
-resource "aws_s3_object" "appenv" {
+resource "aws_s3_bucket_object" "appenv" {
   bucket  = aws_s3_bucket.env.id
   key     = "app/.env"
   content = <<EOT
 APP_PORT=${var.app_port}
 STORE_TYPE=s3
-STORE_BUCKET=${var.appdata}
+STORE_BUCKET=${var.appenv}
 STORE_REGION=${var.region}
 EOT
 }
 
-resource "aws_s3_object" "dbenv" {
+resource "aws_s3_bucket_object" "dbenv" {
   bucket  = aws_s3_bucket.env.id
   key     = "db/.env"
   content = "DB_URI=ashirt:${random_password.db_password.result}@tcp(${aws_rds_cluster.ashirt.endpoint}:3306)/ashirt"

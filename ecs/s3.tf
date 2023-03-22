@@ -1,9 +1,9 @@
 # Environment config and data buckets
 
 resource "aws_s3_bucket" "env" {
-  bucket = var.envbucket
+  bucket = var.appenv
   tags = {
-    Name = "${var.app_name}-env"
+    Name = "${var.appenv}"
   }
   # If KMS enabled, use the key. Otherwise do not apply SSE
   dynamic "server_side_encryption_configuration" {
@@ -21,14 +21,14 @@ resource "aws_s3_bucket" "env" {
 
 resource "aws_s3_bucket_acl" "env_acl" {
   bucket = aws_s3_bucket.env.id
-  acl = "private"
+  acl    = "private"
 }
 
 resource "aws_s3_bucket" "data" {
   bucket        = var.appdata
   force_destroy = true
   tags = {
-    Name = "${var.app_name}-data"
+    Name = "${var.appdata}"
   }
   dynamic "server_side_encryption_configuration" {
     for_each = var.kms ? [1] : []
@@ -45,5 +45,5 @@ resource "aws_s3_bucket" "data" {
 
 resource "aws_s3_bucket_acl" "data_acl" {
   bucket = aws_s3_bucket.data.id
-  acl = "private"
+  acl    = "private"
 }

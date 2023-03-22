@@ -87,6 +87,17 @@ resource "aws_network_acl_rule" "egress" {
   to_port        = 0
 }
 
+resource "aws_network_acl_rule" "ingress-22" {
+  network_acl_id = aws_network_acl.ashirt.id
+  rule_number    = 105
+  egress         = false
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = "0.0.0.0/0"
+  from_port      = 22
+  to_port        = 22
+}
+
 resource "aws_network_acl_rule" "ingress-443" {
   network_acl_id = aws_network_acl.ashirt.id
   rule_number    = 110
