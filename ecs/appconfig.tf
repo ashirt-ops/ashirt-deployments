@@ -56,7 +56,7 @@ resource "aws_s3_object" "appenv" {
   content = <<EOT
 APP_PORT=${var.app_port}
 STORE_TYPE=s3
-STORE_BUCKET=${var.appenv}
+STORE_BUCKET=${var.appdata}
 STORE_REGION=${var.region}
 EOT
 }
