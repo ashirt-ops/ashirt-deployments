@@ -20,7 +20,7 @@ resource "aws_instance" "maintenance" {
   key_name               = aws_key_pair.maintenance[count.index].key_name
   root_block_device {
     encrypted   = true
-    kms_key_id  = var.kms ? aws_kms_key.ashirt[count.index].id : null
+    kms_key_id  = var.kms ? aws_kms_key.ashirt[count.index].arn : null
     volume_size = 50
   }
 

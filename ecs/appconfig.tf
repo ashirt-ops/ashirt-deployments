@@ -10,8 +10,8 @@ resource "random_password" "session_key" {
 }
 
 resource "aws_s3_object" "webenv" {
-  bucket = aws_s3_bucket.env.id
-  key    = "web/.env"
+  bucket  = aws_s3_bucket.env.id
+  key     = "web/.env"
   content = <<EOT
 # Add "google" to the two lists below if you want to set up google oidc
 AUTH_SERVICES=ashirt,webauthn

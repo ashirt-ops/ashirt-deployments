@@ -12,7 +12,6 @@ data "aws_iam_policy_document" "assume-role-policy" {
 }
 
 # IAM Roles
-
 resource "aws_iam_role" "web" {
   name               = "${var.app_name}-web"
   path               = "/system/"
@@ -26,7 +25,6 @@ resource "aws_iam_role" "api" {
 }
 
 # Attach ECSTaskExecutionRolePolicy. Allows the container to send logs.
-
 resource "aws_iam_role_policy_attachment" "ecsTaskExecutionRole-web" {
   role       = aws_iam_role.web.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
@@ -135,7 +133,9 @@ resource "aws_iam_policy" "appdata" {
         Effect = "Allow",
         Action = [
           "s3:GetObject",
-          "s3:PutObject"
+          "s3:PutObject",
+          "s3:DeleteObject",
+          "s3:DeleteObjectVersion"
         ],
         Resource = [
           "${aws_s3_bucket.data.arn}/*"
