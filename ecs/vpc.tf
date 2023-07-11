@@ -16,7 +16,6 @@ resource "aws_internet_gateway" "igw" {
 
 resource "aws_eip" "ngw" {
   count = var.az_count
-  vpc   = true
 }
 
 resource "aws_nat_gateway" "ngw" {
