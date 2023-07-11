@@ -7,11 +7,6 @@ resource "aws_s3_bucket" "env" {
   }
 }
 
-resource "aws_s3_bucket_acl" "env_acl" {
-  bucket = aws_s3_bucket.env.id
-  acl    = "private"
-}
-
 resource "aws_s3_bucket" "data" {
   bucket        = var.appdata
   force_destroy = true
@@ -41,9 +36,4 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "data" {
       sse_algorithm     = "aws:kms"
     }
   }
-}
-
-resource "aws_s3_bucket_acl" "data_acl" {
-  bucket = aws_s3_bucket.data.id
-  acl    = "private"
 }

@@ -44,8 +44,8 @@ AUTH_WEBAUTHN_DISPLAY_NAME=webauthn
 EMAIL_TYPE=smtp
 EMAIL_HOST=email-smtp.${var.region}.amazonaws.com:587
 EMAIL_FROM_ADDRESS=ashirt@${aws_route53_record.frontend.name}
-EMAIL_USER_NAME=${aws_iam_access_key.ashirt_smtp_user.id}
-EMAIL_PASSWORD=${aws_iam_access_key.ashirt_smtp_user.ses_smtp_password_v4}
+EMAIL_USER_NAME=
+EMAIL_PASSWORD=
 EMAIL_SMTP_AUTH_TYPE=login
 EOT
 }
