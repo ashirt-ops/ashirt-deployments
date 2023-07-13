@@ -23,11 +23,11 @@ variable "appenv" {
   default = "example.com-env"
 }
 # Service worker API keys added after initial user setup
-variable "worker_access_key" {
+variable "WORKER_ACCESS_KEY" {
   type    = string
   default = ""
 }
-variable "worker_secret_key" {
+variable "WORKER_SECRET_KEY" {
   type    = string
   default = ""
 }
