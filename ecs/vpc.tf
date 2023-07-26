@@ -153,16 +153,6 @@ resource "aws_lb" "web" {
   }
 }
 
-resource "aws_lb" "api" {
-  name            = "${var.app_name}-api"
-  internal        = false
-  subnets         = aws_subnet.public.*.id
-  security_groups = [aws_security_group.api-lb.id]
-  tags = {
-    Name = var.app_name
-  }
-}
-
 resource "aws_lb" "frontend" {
   name            = "${var.app_name}-frontend"
   internal        = false
@@ -190,28 +180,6 @@ resource "aws_lb_listener" "web" {
   protocol          = "HTTP"
   default_action {
     target_group_arn = aws_lb_target_group.web.id
-    type             = "forward"
-  }
-}
-
-resource "aws_lb_target_group" "api" {
-  name        = "${var.app_name}-api-tg"
-  port        = var.app_port
-  protocol    = "HTTP"
-  vpc_id      = aws_vpc.ashirt.id
-  target_type = "ip"
-  health_check {
-    matcher = "200,401,404"
-  }
-}
-
-resource "aws_lb_listener" "api" {
-  load_balancer_arn = aws_lb.api.id
-  port              = 443
-  protocol          = "HTTPS"
-  certificate_arn   = aws_acm_certificate.ashirt.arn
-  default_action {
-    target_group_arn = aws_lb_target_group.api.id
     type             = "forward"
   }
 }
@@ -250,15 +218,6 @@ resource "aws_security_group" "web-lb" {
   }
 }
 
-resource "aws_security_group" "api-lb" {
-  name        = "ashirt-api-lb"
-  description = "Allow TLS inbound traffic"
-  vpc_id      = aws_vpc.ashirt.id
-  tags = {
-    Name = "ashirt-api-sg"
-  }
-}
-
 resource "aws_security_group" "frontend-lb" {
   name        = "ashirt-frontend-lb"
   description = "Allow TLS inbound traffic to frontend"
@@ -277,15 +236,6 @@ resource "aws_security_group_rule" "allow-egress-web-lb" {
   security_group_id = aws_security_group.web-lb.id
 }
 
-resource "aws_security_group_rule" "allow-egress-api-lb" {
-  type              = "egress"
-  to_port           = 0
-  protocol          = "-1"
-  cidr_blocks       = ["0.0.0.0/0"]
-  from_port         = 0
-  security_group_id = aws_security_group.api-lb.id
-}
-
 resource "aws_security_group_rule" "allow-egress-frontend-lb" {
   type              = "egress"
   to_port           = 0
@@ -295,14 +245,6 @@ resource "aws_security_group_rule" "allow-egress-frontend-lb" {
   security_group_id = aws_security_group.frontend-lb.id
 }
 
-resource "aws_security_group_rule" "allow-ingress-api-lb" {
-  type              = "ingress"
-  to_port           = 443
-  protocol          = "TCP"
-  cidr_blocks       = var.allow_api_cidrs
-  from_port         = 443
-  security_group_id = aws_security_group.api-lb.id
-}
 
 resource "aws_security_group_rule" "allow-ingress-web-lb" {
   type                     = "ingress"
@@ -337,15 +279,6 @@ resource "aws_security_group_rule" "allow-web-rds" {
   source_security_group_id = aws_security_group.web-ecs.id
 }
 
-resource "aws_security_group_rule" "allow-api-rds" {
-  type                     = "ingress"
-  to_port                  = 3306
-  protocol                 = "TCP"
-  from_port                = 3306
-  security_group_id        = aws_security_group.rds.id
-  source_security_group_id = aws_security_group.api-ecs.id
-}
-
 resource "aws_security_group" "web-ecs" {
   name        = "${var.app_name}-web-ecs"
   description = "allow traffic to ecs"
@@ -368,30 +301,6 @@ resource "aws_security_group_rule" "allow-egress-web-ecs" {
   cidr_blocks       = ["0.0.0.0/0"]
   from_port         = 0
   security_group_id = aws_security_group.web-ecs.id
-}
-
-resource "aws_security_group" "api-ecs" {
-  name        = "${var.app_name}-api-ecs"
-  description = "allow traffic to ecs"
-  vpc_id      = aws_vpc.ashirt.id
-}
-
-resource "aws_security_group_rule" "allow-ingress-api-ecs" {
-  type                     = "ingress"
-  to_port                  = var.app_port
-  protocol                 = "TCP"
-  from_port                = var.app_port
-  source_security_group_id = aws_security_group.api-lb.id
-  security_group_id        = aws_security_group.api-ecs.id
-}
-
-resource "aws_security_group_rule" "allow-egress-api-ecs" {
-  type              = "egress"
-  to_port           = 0
-  protocol          = "-1"
-  cidr_blocks       = ["0.0.0.0/0"]
-  from_port         = 0
-  security_group_id = aws_security_group.api-ecs.id
 }
 
 resource "aws_security_group" "frontend-ecs" {

@@ -30,7 +30,7 @@ resource "aws_route53_record" "ashirt-cert" {
   zone_id         = data.aws_route53_zone.ashirt.zone_id
 }
 
-# Web ui for the browser
+# Target for the browser and ashirt application
 
 resource "aws_route53_record" "frontend" {
   zone_id = data.aws_route53_zone.ashirt.zone_id
@@ -38,14 +38,4 @@ resource "aws_route53_record" "frontend" {
   type    = "CNAME"
   ttl     = "300"
   records = [aws_lb.frontend.dns_name]
-}
-
-# API, what ashirt client connects to
-
-resource "aws_route53_record" "api" {
-  zone_id = data.aws_route53_zone.ashirt.zone_id
-  name    = "api.${var.domain}"
-  type    = "CNAME"
-  ttl     = "300"
-  records = [aws_lb.api.dns_name]
 }

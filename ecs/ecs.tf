@@ -80,73 +80,6 @@ resource "aws_ecs_task_definition" "web" {
   ]
 }
 
-# API service. Ashirt clients connect to this directly.
-
-resource "aws_ecs_service" "ashirt-api" {
-  name            = "${var.app_name}-api"
-  cluster         = aws_ecs_cluster.ashirt.id
-  task_definition = aws_ecs_task_definition.api.arn
-  desired_count   = 1
-  launch_type     = "FARGATE"
-
-  load_balancer {
-    target_group_arn = aws_lb_target_group.api.arn
-    container_name   = "${var.app_name}-api"
-    container_port   = var.app_port
-  }
-
-  network_configuration {
-    security_groups  = ["${aws_security_group.api-ecs.id}"]
-    subnets          = var.private_subnet ? aws_subnet.private.*.id : aws_subnet.public.*.id
-    assign_public_ip = var.private_subnet ? false : true
-  }
-}
-
-resource "aws_ecs_task_definition" "api" {
-  family             = "${var.app_name}-api"
-  execution_role_arn = aws_iam_role.api.arn
-  task_role_arn      = aws_iam_role.api.arn
-  container_definitions = jsonencode([
-    {
-      name      = "${var.app_name}-api"
-      image     = "ashirt/api:${var.tag}"
-      cpu       = var.cpu
-      memory    = var.mem
-      essential = true
-      portMappings = [
-        {
-          containerPort = var.app_port
-          hostPort      = var.app_port
-        }
-      ]
-      logConfiguration = {
-        logDriver = "awslogs"
-        options = {
-          awslogs-group         = "/fargate/service/${var.app_name}"
-          awslogs-region        = var.region
-          awslogs-stream-prefix = "ecs"
-        }
-      }
-      environmentFiles = [
-        {
-          value = "${aws_s3_bucket.env.arn}/app/.env"
-          type  = "s3"
-        },
-        {
-          value = "${aws_s3_bucket.env.arn}/db/.env"
-          type  = "s3"
-        }
-      ]
-    }
-  ])
-  cpu          = var.cpu
-  memory       = var.mem
-  network_mode = "awsvpc"
-  requires_compatibilities = [
-    "FARGATE"
-  ]
-}
-
 # Frontend service. Nginx serves static content and proxies to web service.
 
 resource "aws_ecs_service" "ashirt-frontend" {
@@ -218,8 +151,8 @@ resource "aws_ecs_task_definition" "frontend" {
 
 resource "aws_ecs_task_definition" "init" {
   family             = "init"
-  execution_role_arn = aws_iam_role.api.arn
-  task_role_arn      = aws_iam_role.api.arn
+  execution_role_arn = aws_iam_role.web.arn
+  task_role_arn      = aws_iam_role.web.arn
   container_definitions = jsonencode([
     {
       name      = "${var.app_name}-init"
@@ -264,7 +197,7 @@ aws ecs run-task \
 --task-definition ${aws_ecs_task_definition.init.arn} \
 --cluster ${aws_ecs_cluster.ashirt.arn} \
 --launch-type FARGATE \
---network-configuration 'awsvpcConfiguration={subnets=[${join(",", var.private_subnet ? aws_subnet.private.*.id : aws_subnet.public.*.id)}],securityGroups=[${aws_security_group.api-ecs.id}],assignPublicIp=${var.private_subnet ? "DISABLED" : "ENABLED"}}' \
+--network-configuration 'awsvpcConfiguration={subnets=[${join(",", var.private_subnet ? aws_subnet.private.*.id : aws_subnet.public.*.id)}],securityGroups=[${aws_security_group.web-ecs.id}],assignPublicIp=${var.private_subnet ? "DISABLED" : "ENABLED"}}' \
 --region ${var.region}
 EOT
   }
