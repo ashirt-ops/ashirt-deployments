@@ -61,14 +61,6 @@ resource "aws_ecs_task_definition" "web" {
           value = "${aws_s3_bucket.env.arn}/web/.env"
           type  = "s3"
         },
-        {
-          value = "${aws_s3_bucket.env.arn}/app/.env"
-          type  = "s3"
-        },
-        {
-          value = "${aws_s3_bucket.env.arn}/db/.env"
-          type  = "s3"
-        }
       ]
     }
   ])
@@ -176,7 +168,7 @@ resource "aws_ecs_task_definition" "init" {
       }
       environmentFiles = [
         {
-          value = "${aws_s3_bucket.env.arn}/db/.env"
+          value = "${aws_s3_bucket.env.arn}/web/.env"
           type  = "s3"
         }
       ]

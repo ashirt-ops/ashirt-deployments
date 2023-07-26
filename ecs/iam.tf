@@ -45,8 +45,6 @@ resource "aws_iam_policy" "webenv" {
         ],
         Resource = [
           "${aws_s3_bucket.env.arn}/web/.env",
-          "${aws_s3_bucket.env.arn}/db/.env",
-          "${aws_s3_bucket.env.arn}/app/.env"
         ]
       },
       {

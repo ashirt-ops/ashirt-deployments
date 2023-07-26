@@ -47,22 +47,6 @@ EMAIL_FROM_ADDRESS=ashirt@${aws_route53_record.frontend.name}
 EMAIL_USER_NAME=
 EMAIL_PASSWORD=
 EMAIL_SMTP_AUTH_TYPE=login
+DB_URI=ashirt:${random_password.db_password.result}@tcp(${aws_rds_cluster.ashirt.endpoint}:3306)/ashirt
 EOT
-}
-
-resource "aws_s3_object" "appenv" {
-  bucket  = aws_s3_bucket.env.id
-  key     = "app/.env"
-  content = <<EOT
-APP_PORT=${var.app_port}
-STORE_TYPE=s3
-STORE_BUCKET=${var.appdata}
-STORE_REGION=${var.region}
-EOT
-}
-
-resource "aws_s3_object" "dbenv" {
-  bucket  = aws_s3_bucket.env.id
-  key     = "db/.env"
-  content = "DB_URI=ashirt:${random_password.db_password.result}@tcp(${aws_rds_cluster.ashirt.endpoint}:3306)/ashirt"
 }
