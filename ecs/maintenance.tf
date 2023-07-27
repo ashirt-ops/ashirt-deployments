@@ -41,7 +41,7 @@ resource "aws_key_pair" "maintenance" {
   key_name   = "${var.app_name}-maintenance" # Create "myKey" to AWS!!
   public_key = tls_private_key.maintenance[count.index].public_key_openssh
   provisioner "local-exec" {
-    command = "echo '${tls_private_key.maintenance[count.index].private_key_pem}' > ./maintenance-${var.app_name}.pem; chmod 400 maintenance.pem"
+    command = "echo '${tls_private_key.maintenance[count.index].private_key_pem}' > ./maintenance-${var.app_name}.pem; chmod 400 maintenance-${var.app_name}.pem"
   }
 }
 
