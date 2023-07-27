@@ -36,6 +36,7 @@ resource "aws_route53_record" "ashirt-cert" {
 resource "aws_route53_record" "frontend" {
   zone_id = data.aws_route53_zone.ashirt.zone_id
   name    = var.domain
+  type    = "A"
   alias {
     name                   = aws_lb.frontend.dns_name
     zone_id                = aws_lb.frontend.zone_id
