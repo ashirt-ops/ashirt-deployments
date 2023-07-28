@@ -90,7 +90,7 @@ resource "aws_lambda_function" "ocr" {
     variables = {
       ASHIRT_ACCESS_KEY   = var.WORKER_ACCESS_KEY,
       ASHIRT_BACKEND_PORT = "443",
-      ASHIRT_BACKEND_URL  = aws_route53_record.api.name,
+      ASHIRT_BACKEND_URL  = aws_route53_record.frontend.name,
       ASHIRT_SECRET_KEY   = var.WORKER_SECRET_KEY
     }
   }

@@ -41,7 +41,7 @@ resource "aws_key_pair" "maintenance" {
   key_name   = "${var.app_name}-maintenance" # Create "myKey" to AWS!!
   public_key = tls_private_key.maintenance[count.index].public_key_openssh
   provisioner "local-exec" {
-    command = "echo '${tls_private_key.maintenance[count.index].private_key_pem}' > ./maintenance.pem; chmod 400 maintenance.pem"
+    command = "echo '${tls_private_key.maintenance[count.index].private_key_pem}' > ./maintenance-${var.app_name}.pem; chmod 400 maintenance-${var.app_name}.pem"
   }
 }
 
@@ -76,5 +76,5 @@ resource "aws_security_group_rule" "allow-ingress-maintenance" {
 }
 
 output "maintenance_ssh" {
-  value = var.maintenance_mode ? "ssh -i maintenance.pem ubuntu@${aws_instance.maintenance.0.public_ip}" : null
+  value = var.maintenance_mode ? "ssh -fN -i maintenance-${var.app_name}.pem -L 127.0.0.1:3306:${aws_rds_cluster.ashirt.endpoint}:3306 ubuntu@${aws_instance.maintenance.0.public_ip}" : null
 }

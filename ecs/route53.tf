@@ -7,8 +7,9 @@ data "aws_route53_zone" "ashirt" {
 # ACM cert and deps
 
 resource "aws_acm_certificate" "ashirt" {
-  domain_name       = "*.${var.domain}"
-  validation_method = "DNS"
+  domain_name               = var.domain
+  subject_alternative_names = ["ashirt.${var.domain}", "api.${var.domain}"]
+  validation_method         = "DNS"
   lifecycle {
     create_before_destroy = true
   }
@@ -30,22 +31,15 @@ resource "aws_route53_record" "ashirt-cert" {
   zone_id         = data.aws_route53_zone.ashirt.zone_id
 }
 
-# Web ui for the browser
+# Target for the browser and ashirt application
 
 resource "aws_route53_record" "frontend" {
   zone_id = data.aws_route53_zone.ashirt.zone_id
-  name    = "ashirt.${var.domain}"
-  type    = "CNAME"
-  ttl     = "300"
-  records = [aws_lb.frontend.dns_name]
-}
-
-# API, what ashirt client connects to
-
-resource "aws_route53_record" "api" {
-  zone_id = data.aws_route53_zone.ashirt.zone_id
-  name    = "api.${var.domain}"
-  type    = "CNAME"
-  ttl     = "300"
-  records = [aws_lb.api.dns_name]
+  name    = var.domain
+  type    = "A"
+  alias {
+    name                   = aws_lb.frontend.dns_name
+    zone_id                = aws_lb.frontend.zone_id
+    evaluate_target_health = true
+  }
 }

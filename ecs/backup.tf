@@ -35,8 +35,13 @@ resource "aws_iam_role" "backup" {
 POLICY
 }
 
-resource "aws_iam_role_policy_attachment" "backup" {
+resource "aws_iam_role_policy_attachment" "backup-rds" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForBackup"
+  role       = aws_iam_role.backup.name
+}
+
+resource "aws_iam_role_policy_attachment" "backup-s3" {
+  policy_arn = "arn:aws:iam::aws:policy/AWSBackupServiceRolePolicyForS3Backup"
   role       = aws_iam_role.backup.name
 }
 

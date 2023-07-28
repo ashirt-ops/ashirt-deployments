@@ -27,6 +27,13 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "env" {
   }
 }
 
+resource "aws_s3_bucket_versioning" "env" {
+  bucket = aws_s3_bucket.env.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
 resource "aws_s3_bucket_server_side_encryption_configuration" "data" {
   count  = var.kms ? 1 : 0
   bucket = aws_s3_bucket.data.id
@@ -35,5 +42,12 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "data" {
       kms_master_key_id = var.kms ? aws_kms_key.ashirt.0.arn : ""
       sse_algorithm     = "aws:kms"
     }
+  }
+}
+
+resource "aws_s3_bucket_versioning" "data" {
+  bucket = aws_s3_bucket.data.id
+  versioning_configuration {
+    status = "Enabled"
   }
 }

@@ -6,7 +6,7 @@ resource "random_password" "db_password" {
 }
 
 resource "aws_rds_cluster" "ashirt" {
-  cluster_identifier        = "ashirt"
+  cluster_identifier        = "${var.app_name}-ecs"
   engine                    = "aurora-mysql"
   database_name             = "ashirt"
   master_username           = "ashirt"
