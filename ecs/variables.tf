@@ -53,6 +53,12 @@ variable "kms" {
   default = true
 }
 
+# Scale RDS to 0?
+variable "auto_pause_rds" {
+  type    = bool
+  default = true
+}
+
 variable "region" {
   type    = string
   default = "us-west-2"
