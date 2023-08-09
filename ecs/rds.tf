@@ -20,6 +20,7 @@ resource "aws_rds_cluster" "ashirt" {
   kms_key_id                = var.kms ? aws_kms_key.ashirt.0.arn : ""
   scaling_configuration {
     min_capacity = 1
+    auto_pause   = var.auto_pause_rds
   }
 }
 
