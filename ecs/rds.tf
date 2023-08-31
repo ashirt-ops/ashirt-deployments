@@ -19,7 +19,7 @@ resource "aws_rds_cluster" "ashirt" {
   final_snapshot_identifier = "${var.app_name}-${formatdate("YYYY-MM-DD-hh-mm", timestamp())}"
   kms_key_id                = var.kms ? aws_kms_key.ashirt.0.arn : ""
   scaling_configuration {
-    min_capacity = 1
+    min_capacity = var.rds_min_capacity
     auto_pause   = var.auto_pause_rds
   }
 }
