@@ -77,6 +77,13 @@ variable "mem" {
   type    = number
   default = 512
 }
+
+variable "ocr_mem" {
+  type        = number
+  default     = 256
+  description = "memory limit for the ocr service worker"
+}
+
 # Application prefix. This can be used for prod/dev deployments.
 variable "app_name" {
   type        = string
