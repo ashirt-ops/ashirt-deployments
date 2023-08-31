@@ -85,7 +85,7 @@ resource "aws_lambda_function" "ocr" {
   timeout       = 60
   image_uri     = "${aws_ecr_repository.repo.repository_url}@${data.aws_ecr_image.ocr_image.id}"
   package_type  = "Image"
-  memory_size   = 256
+  memory_size   = var.ocr_mem
   environment {
     variables = {
       ASHIRT_ACCESS_KEY   = var.WORKER_ACCESS_KEY,
