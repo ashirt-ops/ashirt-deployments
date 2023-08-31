@@ -59,6 +59,11 @@ variable "auto_pause_rds" {
   default = true
 }
 
+variable "rds_min_capacity" {
+  type    = number
+  default = 1
+}
+
 variable "region" {
   type    = string
   default = "us-west-2"
