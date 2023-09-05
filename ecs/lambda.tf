@@ -82,7 +82,7 @@ resource "aws_lambda_function" "ocr" {
   ]
   function_name = "${local.prefix}-ocr"
   role          = aws_iam_role.lambda.arn
-  timeout       = 60
+  timeout       = ocr.timeout
   image_uri     = "${aws_ecr_repository.repo.repository_url}@${data.aws_ecr_image.ocr_image.id}"
   package_type  = "Image"
   memory_size   = var.ocr_mem

@@ -78,10 +78,27 @@ variable "mem" {
   default = 512
 }
 
+variable "web_count" {
+  type        = number
+  default     = 1
+  description = "number of web tasts to run"
+}
+variable "frontend_count" {
+  type        = number
+  default     = 1
+  description = "number of frontend tasks to run"
+}
+
 variable "ocr_mem" {
   type        = number
   default     = 256
   description = "memory limit for the ocr service worker"
+}
+
+variable "ocr_timeout" {
+  type        = number
+  default     = 180
+  description = "time limit for the ocr service worker"
 }
 
 # Application prefix. This can be used for prod/dev deployments.
