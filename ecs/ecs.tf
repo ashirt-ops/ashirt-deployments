@@ -15,7 +15,7 @@ resource "aws_ecs_service" "ashirt-web" {
   name            = "${var.app_name}-web"
   cluster         = aws_ecs_cluster.ashirt.id
   task_definition = aws_ecs_task_definition.web.arn
-  desired_count   = 1
+  desired_count   = var.web_count
   launch_type     = "FARGATE"
 
   load_balancer {
@@ -78,7 +78,7 @@ resource "aws_ecs_service" "ashirt-frontend" {
   name            = "${var.app_name}-frontend"
   cluster         = aws_ecs_cluster.ashirt.id
   task_definition = aws_ecs_task_definition.frontend.arn
-  desired_count   = 1
+  desired_count   = var.frontend_count
   launch_type     = "FARGATE"
 
   load_balancer {
