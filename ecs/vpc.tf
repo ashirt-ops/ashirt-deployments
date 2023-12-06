@@ -1,7 +1,7 @@
 # VPC Resources
 
 resource "aws_vpc" "ashirt" {
-  cidr_block = "10.0.0.0/16"
+  cidr_block = var.vpc_cidr
   tags = {
     Name = var.app_name
   }
@@ -39,7 +39,7 @@ resource "aws_subnet" "public" {
   count             = var.az_count
   availability_zone = data.aws_availability_zones.az.names[count.index]
   vpc_id            = aws_vpc.ashirt.id
-  cidr_block        = cidrsubnet(aws_vpc.ashirt.cidr_block, 8, count.index)
+  cidr_block        = cidrsubnet(aws_vpc.ashirt.cidr_block, 4, count.index)
   tags = {
     Name = "${var.app_name}-public"
   }
@@ -49,7 +49,7 @@ resource "aws_subnet" "private" {
   count             = var.private_subnet ? var.az_count : 0
   availability_zone = data.aws_availability_zones.az.names[count.index]
   vpc_id            = aws_vpc.ashirt.id
-  cidr_block        = cidrsubnet(aws_vpc.ashirt.cidr_block, 8, var.az_count + count.index)
+  cidr_block        = cidrsubnet(aws_vpc.ashirt.cidr_block, 4, var.az_count + count.index)
   tags = {
     Name = "${var.app_name}-private"
   }
@@ -87,6 +87,7 @@ resource "aws_network_acl_rule" "egress" {
 }
 
 resource "aws_network_acl_rule" "ingress-22" {
+  count          = var.maintenance_mode ? 1 : 0
   network_acl_id = aws_network_acl.ashirt.id
   rule_number    = 105
   egress         = false

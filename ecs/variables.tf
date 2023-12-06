@@ -107,6 +107,13 @@ variable "app_name" {
   description = "Name of your application deployment"
   default     = "ashirt"
 }
+
+# CIDR used for the ashirt VPC
+variable "vpc_cidr" {
+  type = string
+  default = "10.0.0.0/24"
+}
+
 # Allowlists for the frontend and API interfaces. For production deployments we recommend the API to be exposed publically for operator flexiblitiy
 # and the frontend have some network restrictions.
 variable "allow_frontend_cidrs" {
