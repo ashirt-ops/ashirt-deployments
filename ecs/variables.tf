@@ -5,7 +5,7 @@
 # Repository hash ( e.g. sha-84dae8b) or pr tag (e.g. pr-678) is used to target a snapshot of the rolling update. `latest` may be used, but is not recommended.
 variable "tag" {
   type    = string
-  default = "sha-d8e6d60"
+  default = "sha-b223404"
 }
 # Public domain name for application. This must be registered with route53, with a primary public zone created.
 variable "domain" {
@@ -71,11 +71,11 @@ variable "region" {
 # Resources for each container. This must follow Fargate sizing described here https://docs.aws.amazon.com/AmazonECS/latest/developerguide/AWS_Fargate.html#
 variable "cpu" {
   type    = number
-  default = 256
+  default = 512
 }
 variable "mem" {
   type    = number
-  default = 512
+  default = 1024
 }
 
 variable "web_count" {
@@ -91,7 +91,7 @@ variable "frontend_count" {
 
 variable "ocr_mem" {
   type        = number
-  default     = 256
+  default     = 512
   description = "memory limit for the ocr service worker"
 }
 
