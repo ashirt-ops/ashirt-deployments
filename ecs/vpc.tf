@@ -87,6 +87,7 @@ resource "aws_network_acl_rule" "egress" {
 }
 
 resource "aws_network_acl_rule" "ingress-22" {
+  count          = var.maintenance_mode ? 1 : 0
   network_acl_id = aws_network_acl.ashirt.id
   rule_number    = 105
   egress         = false
