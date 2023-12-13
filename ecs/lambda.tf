@@ -2,23 +2,24 @@ locals {
   prefix              = "ashirt-workers"
   account_id          = data.aws_caller_identity.current.account_id
   ecr_repository_name = "${local.prefix}-ocr"
-  ecr_image_tag       = "latest"
+  ecr_image_tag       = var.worker_tag
 }
 
 resource "aws_ecr_repository" "repo" {
-  name = local.ecr_repository_name
+  name         = local.ecr_repository_name
+  force_delete = true
   image_scanning_configuration {
     scan_on_push = true
   }
 }
 
-# Pull the latest demo-ocr image and re-upload to ECR registry (required for container lambda)
+# Pull the demo-ocr image and re-upload to ECR registry (required for container lambda)
 resource "null_resource" "ocr_image" {
   provisioner "local-exec" {
     command = <<EOF
            aws ecr get-login-password --region ${var.region} | docker login --username AWS --password-stdin ${local.account_id}.dkr.ecr.${var.region}.amazonaws.com
-           docker pull ashirt/demo-ocr:latest
-           docker tag ashirt/demo-ocr:latest ${aws_ecr_repository.repo.repository_url}:${local.ecr_image_tag}
+           docker pull ashirt/demo-ocr:${local.ecr_image_tag}
+           docker tag ashirt/demo-ocr:${local.ecr_image_tag} ${aws_ecr_repository.repo.repository_url}:${local.ecr_image_tag}
            docker push ${aws_ecr_repository.repo.repository_url}:${local.ecr_image_tag}
        EOF
   }
@@ -26,7 +27,8 @@ resource "null_resource" "ocr_image" {
 
 data "aws_ecr_image" "ocr_image" {
   depends_on = [
-    null_resource.ocr_image
+    null_resource.ocr_image,
+    aws_ecr_repository.repo
   ]
   repository_name = local.ecr_repository_name
   image_tag       = local.ecr_image_tag
@@ -83,7 +85,7 @@ resource "aws_lambda_function" "ocr" {
   function_name = "${local.prefix}-ocr"
   role          = aws_iam_role.lambda.arn
   timeout       = var.ocr_timeout
-  image_uri     = "${aws_ecr_repository.repo.repository_url}@${data.aws_ecr_image.ocr_image.id}"
+  image_uri     = "${aws_ecr_repository.repo.repository_url}:${local.ecr_image_tag}"
   package_type  = "Image"
   memory_size   = var.ocr_mem
   environment {
