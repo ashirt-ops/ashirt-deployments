@@ -2,6 +2,10 @@
 
 resource "aws_ecs_cluster" "ashirt" {
   name = var.app_name
+  setting {
+    name  = "containerInsights"
+    value = "enabled"
+  }
 }
 
 resource "aws_cloudwatch_log_group" "logs" {

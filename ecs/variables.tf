@@ -32,6 +32,11 @@ variable "WORKER_SECRET_KEY" {
   default = ""
 }
 
+variable "worker_tag" {
+  type    = string
+  default = "latest"
+}
+
 ##########################
 # MAY UPDATE BELOW #######
 ##########################
@@ -110,7 +115,7 @@ variable "app_name" {
 
 # CIDR used for the ashirt VPC
 variable "vpc_cidr" {
-  type = string
+  type    = string
   default = "10.0.0.0/24"
 }
 
