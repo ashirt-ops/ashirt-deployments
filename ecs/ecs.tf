@@ -198,7 +198,12 @@ aws ecs run-task \
 --region ${var.region}
 EOT
   }
-  depends_on = [aws_rds_cluster.ashirt]
+  depends_on = [
+    aws_rds_cluster.ashirt,
+    aws_ecs_task_definition.init,
+    aws_s3_object.webenv,
+    aws_iam_role.web
+  ]
   triggers = {
     version_database = join(",", [aws_rds_cluster.ashirt.id, var.tag])
   }
