@@ -17,6 +17,7 @@ resource "aws_cloudwatch_log_group" "logs" {
 
 resource "aws_ecs_service" "ashirt-web" {
   name            = "${var.app_name}-web"
+  depends_on      = [null_resource.ecs-run-task-init]
   cluster         = aws_ecs_cluster.ashirt.id
   task_definition = aws_ecs_task_definition.web.arn
   desired_count   = var.web_count
