@@ -39,7 +39,7 @@ resource "aws_subnet" "public" {
   count             = var.az_count
   availability_zone = data.aws_availability_zones.az.names[count.index]
   vpc_id            = aws_vpc.ashirt.id
-  cidr_block        = cidrsubnet(aws_vpc.ashirt.cidr_block, 4, count.index)
+  cidr_block        = cidrsubnet(aws_vpc.ashirt.cidr_block, var.vpc_subnet_bits, count.index)
   tags = {
     Name = "${var.app_name}-public"
   }
@@ -49,7 +49,7 @@ resource "aws_subnet" "private" {
   count             = var.private_subnet ? var.az_count : 0
   availability_zone = data.aws_availability_zones.az.names[count.index]
   vpc_id            = aws_vpc.ashirt.id
-  cidr_block        = cidrsubnet(aws_vpc.ashirt.cidr_block, 4, var.az_count + count.index)
+  cidr_block        = cidrsubnet(aws_vpc.ashirt.cidr_block, var.vpc_subnet_bits, var.az_count + count.index)
   tags = {
     Name = "${var.app_name}-private"
   }

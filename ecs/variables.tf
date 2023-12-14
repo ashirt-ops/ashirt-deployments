@@ -119,6 +119,11 @@ variable "vpc_cidr" {
   default = "10.0.0.0/24"
 }
 
+variable "vpc_subnet_bits" {
+  type    = number
+  default = 4
+}
+
 # Allowlists for the frontend and API interfaces. For production deployments we recommend the API to be exposed publically for operator flexiblitiy
 # and the frontend have some network restrictions.
 variable "allow_frontend_cidrs" {
