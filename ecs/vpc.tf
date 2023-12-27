@@ -98,6 +98,18 @@ resource "aws_network_acl_rule" "ingress-22" {
   to_port        = 22
 }
 
+resource "aws_network_acl_rule" "ingress-debug" {
+  count          = var.maintenance_mode ? 1 : 0
+  network_acl_id = aws_network_acl.ashirt.id
+  rule_number    = 106
+  egress         = false
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = "0.0.0.0/0"
+  from_port      = 2345
+  to_port        = 2345
+}
+
 resource "aws_network_acl_rule" "ingress-443" {
   network_acl_id = aws_network_acl.ashirt.id
   rule_number    = 110
@@ -291,6 +303,16 @@ resource "aws_security_group_rule" "allow-ingress-web-ecs" {
   to_port                  = var.app_port
   protocol                 = "TCP"
   from_port                = var.app_port
+  source_security_group_id = aws_security_group.web-lb.id
+  security_group_id        = aws_security_group.web-ecs.id
+}
+
+resource "aws_security_group_rule" "allow-ingress-web-debug" {
+  count                    = var.maintenance_mode ? 1 : 0
+  type                     = "ingress"
+  to_port                  = 2345
+  protocol                 = "TCP"
+  from_port                = 2345
   source_security_group_id = aws_security_group.web-lb.id
   security_group_id        = aws_security_group.web-ecs.id
 }

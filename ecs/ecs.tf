@@ -51,6 +51,10 @@ resource "aws_ecs_task_definition" "web" {
         {
           containerPort = var.app_port
           hostPort      = var.app_port
+        },
+        {
+          containerPort = 2345
+          hostPort      = 2345
         }
       ]
       logConfiguration = {
