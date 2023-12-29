@@ -60,6 +60,16 @@ In the ashirt admin page setup a service worker with the below configuration.
 The lambda will now invoke for new pieces of image evidence. To process existing evidence you can run a worker on multiple items from the operation admin settings. 
 
 
+# Manage Ashirt
+
+If you need to interact with the database set `maintenance_mode` to `true` and run `terraform apply` to provision a bastion with network access to the RDS instance.
+
+To debug a production instance set `debug_mode` to `true` and run `terraform apply` to provision network access to the `debug_port`. This should normally be used in conjunction with `maintenance_mode`. To disable `debug_mode` properly you may need to re-create the web service.
+
+```sh
+terraform apply -var-file vars.tfvars -replace aws_ecs_service.ashirt-web --auto-approve
+```
+
 # Uninstall Ashirt
 
 ```sh

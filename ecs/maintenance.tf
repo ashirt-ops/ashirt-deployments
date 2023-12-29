@@ -75,6 +75,6 @@ resource "aws_security_group_rule" "allow-ingress-maintenance" {
   security_group_id = aws_security_group.maintenance[count.index].id
 }
 
-output "maintenance_ssh" {
+output "maintenance_rds" {
   value = var.maintenance_mode ? "ssh -fN -i maintenance-${var.app_name}.pem -L 127.0.0.1:3306:${aws_rds_cluster.ashirt.endpoint}:3306 ubuntu@${aws_instance.maintenance.0.public_ip}" : null
 }
