@@ -1,5 +1,5 @@
 output "maintenance_debug" {
-  value = var.debug_mode ? "ssh -fN -i maintenance-${var.app_name}.pem -L 127.0.0.1:2345:${aws_lb.debug.0.dns_name}:2345 ubuntu@${aws_instance.maintenance.0.public_ip}" : null
+  value = var.debug_mode && var.maintenance_mode ? "ssh -fN -i maintenance-${var.app_name}.pem -L 127.0.0.1:2345:${aws_lb.debug.0.dns_name}:2345 ubuntu@${aws_instance.maintenance.0.public_ip}" : null
 }
 
 # Setting up an NLB for the debug port. 
@@ -85,7 +85,7 @@ resource "aws_security_group_rule" "allow-egress-debug" {
 }
 
 resource "aws_security_group_rule" "allow-ingress-debug" {
-  count                    = var.debug_mode ? 1 : 0
+  count                    = var.debug_mode && var.maintenance_mode ? 1 : 0
   type                     = "ingress"
   to_port                  = var.debug_port
   protocol                 = "TCP"
