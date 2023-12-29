@@ -46,6 +46,12 @@ variable "maintenance_mode" {
   default = false
 }
 
+# Enable Debug mode. This provisions networking for the maintenance host to access the debug port
+variable "debug_mode" {
+  type    = bool
+  default = false
+}
+
 # Do you want things in private subnets?
 variable "private_subnet" {
   type    = bool
@@ -116,7 +122,7 @@ variable "app_name" {
 # CIDR used for the ashirt VPC
 variable "vpc_cidr" {
   type    = string
-  default = "10.0.0.0/24"
+  default = "10.0.0.0/16"
 }
 
 variable "vpc_subnet_bits" {
@@ -152,4 +158,9 @@ variable "app_port" {
 variable "nginx_port" {
   type    = number
   default = 8080
+}
+
+variable "debug_port" {
+  type    = number
+  default = 2345
 }

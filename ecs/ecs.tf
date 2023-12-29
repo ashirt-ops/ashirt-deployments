@@ -29,8 +29,17 @@ resource "aws_ecs_service" "ashirt-web" {
     container_port   = var.app_port
   }
 
+  dynamic "load_balancer" {
+    for_each = var.debug_mode ? ["true"] : []
+    content {
+      target_group_arn = aws_lb_target_group.debug[0].arn
+      container_name   = "${var.app_name}-web"
+      container_port   = var.debug_port
+    }
+  }
+
   network_configuration {
-    security_groups  = ["${aws_security_group.web-ecs.id}"]
+    security_groups  = var.debug_mode ? [aws_security_group.debug.0.id, "${aws_security_group.web-ecs.id}"] : ["${aws_security_group.web-ecs.id}"]
     subnets          = var.private_subnet ? aws_subnet.private.*.id : aws_subnet.public.*.id
     assign_public_ip = var.private_subnet ? false : true
   }
@@ -53,8 +62,8 @@ resource "aws_ecs_task_definition" "web" {
           hostPort      = var.app_port
         },
         {
-          containerPort = 2345
-          hostPort      = 2345
+          containerPort = var.debug_port
+          hostPort      = var.debug_port
         }
       ]
       logConfiguration = {
