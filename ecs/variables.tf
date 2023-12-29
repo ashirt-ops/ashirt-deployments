@@ -67,7 +67,7 @@ variable "kms" {
 # Scale RDS to 0?
 variable "auto_pause_rds" {
   type    = bool
-  default = true
+  default = false
 }
 
 variable "rds_min_capacity" {
