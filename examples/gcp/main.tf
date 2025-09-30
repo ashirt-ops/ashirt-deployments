@@ -4,7 +4,7 @@ provider "google" {
 }
 
 module "gcp" {
-  source = "../../modules/gcp"
+  source = "./ashirt-deployments/modules/gcp"
 
   project     = local.project
   region      = local.region
