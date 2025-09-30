@@ -145,10 +145,10 @@ resource "google_cloud_run_v2_service" "backend" {
 #  }
 #}
 
-#resource "google_cloud_run_service_iam_member" "backend_public_access" {
-#  location = google_cloud_run_v2_service.backend.location
-#  project  = google_cloud_run_v2_service.backend.project
-#  service  = google_cloud_run_v2_service.backend.name
-#  role     = "roles/run.invoker"
-#  member   = "allUsers"
-#}
+resource "google_cloud_run_service_iam_member" "backend_public_access" {
+  location = google_cloud_run_v2_service.backend.location
+  project  = google_cloud_run_v2_service.backend.project
+  service  = google_cloud_run_v2_service.backend.name
+  role     = "roles/run.invoker"
+  member   = "allUsers"
+}

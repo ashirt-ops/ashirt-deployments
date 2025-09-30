@@ -106,10 +106,10 @@ resource "google_cloud_run_v2_service" "frontend" {
 #  }
 #}
 
-#resource "google_cloud_run_service_iam_member" "frontend_public_access" {
-#  location = google_cloud_run_v2_service.frontend.location
-#  project  = google_cloud_run_v2_service.frontend.project
-#  service  = google_cloud_run_v2_service.frontend.name
-#  role     = "roles/run.invoker"
-#  member   = "allUsers"
-#}
+resource "google_cloud_run_service_iam_member" "frontend_public_access" {
+  location = google_cloud_run_v2_service.frontend.location
+  project  = google_cloud_run_v2_service.frontend.project
+  service  = google_cloud_run_v2_service.frontend.name
+  role     = "roles/run.invoker"
+  member   = "allUsers"
+}
