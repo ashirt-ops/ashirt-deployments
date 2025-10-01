@@ -10,7 +10,7 @@ resource "random_password" "ashirt_db_password" {
 
 resource "google_compute_global_address" "private_ip_address" {
   project       = var.project
-  name          = "private-ip-address"
+  name          = "ashirt-sql-ip-address-${var.environment}"
   purpose       = "VPC_PEERING"
   address_type  = "INTERNAL"
   prefix_length = 20

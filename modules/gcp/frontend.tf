@@ -1,12 +1,12 @@
 resource "google_service_account" "frontend" {
   project      = var.project
-  account_id   = "frontend-service"
+  account_id   = "frontend-service-${var.environment}"
   display_name = "frontend"
 }
 
 resource "google_cloud_run_v2_service" "frontend" {
   project  = var.project
-  name     = "frontend"
+  name     = "frontend-${var.environment}"
   location = var.region
   # TODO: change
   deletion_protection = false

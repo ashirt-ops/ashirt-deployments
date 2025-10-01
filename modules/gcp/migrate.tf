@@ -1,7 +1,7 @@
 resource "google_cloud_run_v2_job" "init_api" {
   deletion_protection = false
   project             = var.project
-  name                = "ashirt-${var.environment}-migrate"
+  name                = "ashirt-migrate-${var.environment}"
   location            = var.region
   template {
     template {

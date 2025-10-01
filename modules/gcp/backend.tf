@@ -1,6 +1,6 @@
 resource "google_service_account" "backend" {
   project      = var.project
-  account_id   = "backend-service"
+  account_id   = "backend-service-${var.environment}"
   display_name = "backend"
 }
 
@@ -11,7 +11,7 @@ resource "random_password" "session_key" {
 
 resource "google_cloud_run_v2_service" "backend" {
   project  = var.project
-  name     = "backend"
+  name     = "backend-${var.environment}"
   location = var.region
   # TODO: change
   deletion_protection = false
