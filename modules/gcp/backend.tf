@@ -35,7 +35,7 @@ resource "google_cloud_run_v2_service" "backend" {
 
       env {
         name  = "STORE_REGION"
-        value = google_storage_bucket.ashirt_storage.region
+        value = google_storage_bucket.ashirt_storage.location
       }
 
       env {
