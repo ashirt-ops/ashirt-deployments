@@ -24,18 +24,18 @@ resource "google_cloud_run_v2_service" "backend" {
       image = "docker.io/ashirt/web:${var.tag}"
 
       env {
-        name  = "APP_IMGSTORE_BUCKET_NAME"
+        name  = "STORE_TYPE"
+        value = "gcp"
+      }
+
+      env {
+        name  = "STORE_BUCKET"
         value = google_storage_bucket.ashirt_storage.name
       }
 
       env {
-        name  = "APP_IMGSTORE_REGION"
-        value = var.region
-      }
-
-      env {
-        name  = "STORE_TYPE"
-        value = "gcp"
+        name  = "STORE_REGION"
+        value = google_storage_bucket.ashirt_storage.region
       }
 
       env {
