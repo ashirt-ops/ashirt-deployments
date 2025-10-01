@@ -37,7 +37,7 @@ variable "tag" {
   description = "The image tag for the containers"
 }
 
-variable "auth" {
+variable "backend_env" {
   type        = map(any)
-  description = ""
+  description = "Environment variables for the backend service"
 }

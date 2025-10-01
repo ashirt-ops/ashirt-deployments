@@ -59,7 +59,7 @@ resource "google_cloud_run_v2_service" "backend" {
       }
 
       dynamic "env" {
-        for_each = var.auth
+        for_each = var.backend_env
 
         content {
           name  = env.key
