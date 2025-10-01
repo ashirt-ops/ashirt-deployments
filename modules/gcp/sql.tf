@@ -63,9 +63,9 @@ resource "google_sql_database" "ashirt" {
 
 resource "google_secret_manager_secret" "ashirt_dsn" {
   project   = var.project
-  secret_id = "ashirt_dsn"
+  secret_id = "ashirt-dsn-${var.environment}"
   labels = {
-    label = "ashirt_dsn"
+    label = "ashirt-dsn-${var.environment}"
   }
 
   replication {
