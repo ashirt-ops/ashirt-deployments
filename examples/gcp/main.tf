@@ -10,5 +10,5 @@ module "gcp" {
   region      = local.region
   environment = local.environment
   tag         = local.tag
-  backend_end = local.backend_env
+  backend_env = local.backend_env
 }
