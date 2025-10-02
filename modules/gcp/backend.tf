@@ -1,7 +1,7 @@
 resource "google_service_account" "backend" {
   project      = var.project
-  account_id   = "backend-service-${var.environment}"
-  display_name = "backend"
+  account_id   = "ashirt-backend-${var.environment}"
+  display_name = "ashirt backend ${var.environment}"
 }
 
 resource "random_password" "session_key" {

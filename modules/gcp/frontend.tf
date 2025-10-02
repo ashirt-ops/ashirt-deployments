@@ -1,7 +1,7 @@
 resource "google_service_account" "frontend" {
   project      = var.project
-  account_id   = "frontend-service-${var.environment}"
-  display_name = "frontend"
+  account_id   = "ashirt-frontend-${var.environment}"
+  display_name = "ashirt frontend ${var.environment}"
 }
 
 resource "google_cloud_run_v2_service" "frontend" {
