@@ -1,23 +1,11 @@
-resource "google_project_iam_member" "backend-storage-get" {
+resource "google_project_iam_member" "backend-storage-viewer" {
   project = var.project
-  role    = "roles/storage.objects.get"
+  role    = "roles/storage.objectViewer"
   member  = google_service_account.backend.member
 }
 
-resource "google_project_iam_member" "backend-storage-list" {
+resource "google_project_iam_member" "backend-storage-creator" {
   project = var.project
-  role    = "roles/storage.objects.list"
-  member  = google_service_account.backend.member
-}
-
-resource "google_project_iam_member" "backend-storage-create" {
-  project = var.project
-  role    = "roles/storage.objects.create"
-  member  = google_service_account.backend.member
-}
-
-resource "google_project_iam_member" "backend-storage-delete" {
-  project = var.project
-  role    = "roles/storage.objects.delete"
+  role    = "roles/storage.objects.objectCreator"
   member  = google_service_account.backend.member
 }
