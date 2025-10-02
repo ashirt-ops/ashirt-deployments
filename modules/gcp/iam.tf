@@ -6,6 +6,6 @@ resource "google_project_iam_member" "backend-storage-viewer" {
 
 resource "google_project_iam_member" "backend-storage-creator" {
   project = var.project
-  role    = "roles/storage.objects.objectCreator"
+  role    = "roles/storage.objectCreator"
   member  = google_service_account.backend.member
 }
