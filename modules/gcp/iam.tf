@@ -1,11 +1,5 @@
-resource "google_project_iam_member" "backend-storage-viewer" {
+resource "google_project_iam_member" "backend-storage-user" {
   project = var.project
-  role    = "roles/storage.objectViewer"
-  member  = google_service_account.backend.member
-}
-
-resource "google_project_iam_member" "backend-storage-creator" {
-  project = var.project
-  role    = "roles/storage.objectCreator"
+  role    = "roles/storage.objectUser"
   member  = google_service_account.backend.member
 }
