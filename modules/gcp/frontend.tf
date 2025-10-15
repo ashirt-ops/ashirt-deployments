@@ -48,6 +48,10 @@ resource "google_cloud_run_v2_service" "frontend" {
       egress = "ALL_TRAFFIC"
     }
   }
+
+  scaling {
+    min_instance_count = var.min_frontend_instances
+  }
 }
 
 #resource "google_compute_firewall" "frontend_firewall" {

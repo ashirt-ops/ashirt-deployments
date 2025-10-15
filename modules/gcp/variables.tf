@@ -41,3 +41,16 @@ variable "backend_env" {
   type        = map(any)
   description = "Environment variables for the backend service"
 }
+
+variable "min_backend_instances" {
+  type        = number
+  description = "The minimum number of backend instances"
+  default     = 0
+}
+
+
+variable "min_frontend_instances" {
+  type        = number
+  description = "The minimum number of frontend instances"
+  default     = 0
+}

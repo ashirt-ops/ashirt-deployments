@@ -7,4 +7,6 @@ locals {
     "AUTH_SERVICES"                    = "ashirt"
     "AUTH_SERVICES_ALLOW_REGISTRATION" = "ashirt"
   }
+  min_backend_instances  = 0
+  min_frontend_instances = 0
 }

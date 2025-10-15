@@ -6,9 +6,11 @@ provider "google" {
 module "gcp" {
   source = "./ashirt-deployments/modules/gcp"
 
-  project     = local.project
-  region      = local.region
-  environment = local.environment
-  tag         = local.tag
-  backend_env = local.backend_env
+  project                = local.project
+  region                 = local.region
+  environment            = local.environment
+  tag                    = local.tag
+  backend_env            = local.backend_env
+  min_backend_instances  = local.min_backend_instances
+  min_frontend_instances = local.min_frontend_instances
 }

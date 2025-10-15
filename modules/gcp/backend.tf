@@ -88,6 +88,10 @@ resource "google_cloud_run_v2_service" "backend" {
       egress = "ALL_TRAFFIC"
     }
   }
+
+  scaling {
+    min_instance_count = var.min_backend_instances
+  }
 }
 
 #resource "google_compute_firewall" "backend_firewall" {
