@@ -61,13 +61,13 @@ variable "min_ocr_worker_instances" {
   default     = 0
 }
 
-variable "worker_access_key" {
+variable "ocr_worker_access_key" {
   type        = string
   description = "Access key for the ocr-worker to authenticate against the backend API"
   sensitive   = true
 }
 
-variable "worker_secret_key" {
+variable "ocr_worker_secret_key" {
   type        = string
   description = "Base64-encoded secret key for the ocr-worker to authenticate against the backend API"
   sensitive   = true

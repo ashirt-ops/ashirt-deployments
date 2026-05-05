@@ -18,7 +18,7 @@ resource "google_secret_manager_secret" "ocr_worker_access_key" {
 
 resource "google_secret_manager_secret_version" "ocr_worker_access_key" {
   secret      = google_secret_manager_secret.ocr_worker_access_key.id
-  secret_data = var.worker_access_key
+  secret_data = var.ocr_worker_access_key
 }
 
 resource "google_secret_manager_secret" "ocr_worker_secret_key" {
@@ -35,7 +35,7 @@ resource "google_secret_manager_secret" "ocr_worker_secret_key" {
 
 resource "google_secret_manager_secret_version" "ocr_worker_secret_key" {
   secret      = google_secret_manager_secret.ocr_worker_secret_key.id
-  secret_data = var.worker_secret_key
+  secret_data = var.ocr_worker_secret_key
 }
 
 resource "google_secret_manager_secret_iam_binding" "ocr_worker_access_key" {

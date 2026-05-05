@@ -13,6 +13,6 @@ locals {
   ocr_worker_env = {
     "BACKEND" = "gcp"
   }
-  worker_access_key = ""
-  worker_secret_key = ""
+  ocr_worker_access_key = ""
+  ocr_worker_secret_key = ""
 }

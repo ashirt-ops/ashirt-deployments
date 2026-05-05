@@ -15,6 +15,6 @@ module "gcp" {
   min_frontend_instances   = local.min_frontend_instances
   min_ocr_worker_instances = local.min_ocr_worker_instances
   ocr_worker_env           = local.ocr_worker_env
-  worker_access_key        = local.worker_access_key
-  worker_secret_key        = local.worker_secret_key
+  ocr_worker_access_key    = local.ocr_worker_access_key
+  ocr_worker_secret_key    = local.ocr_worker_secret_key
 }
