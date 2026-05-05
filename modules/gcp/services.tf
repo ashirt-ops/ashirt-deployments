@@ -28,6 +28,12 @@ resource "google_project_service" "compute" {
   disable_on_destroy = false
 }
 
+resource "google_project_service" "vision" {
+  project            = var.project
+  service            = "vision.googleapis.com"
+  disable_on_destroy = false
+}
+
 #resource "google_project_service" "domains" {
 #  project            = var.project
 #  service            = "domains.googleapis.com"

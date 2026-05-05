@@ -54,3 +54,27 @@ variable "min_frontend_instances" {
   description = "The minimum number of frontend instances"
   default     = 0
 }
+
+variable "min_ocr_worker_instances" {
+  type        = number
+  description = "The minimum number of ocr-worker instances"
+  default     = 0
+}
+
+variable "worker_access_key" {
+  type        = string
+  description = "Access key for the ocr-worker to authenticate against the backend API"
+  sensitive   = true
+}
+
+variable "worker_secret_key" {
+  type        = string
+  description = "Base64-encoded secret key for the ocr-worker to authenticate against the backend API"
+  sensitive   = true
+}
+
+variable "ocr_worker_env" {
+  type        = map(any)
+  description = "Environment variables for the ocr-worker service"
+  default     = {}
+}
