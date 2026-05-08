@@ -37,6 +37,11 @@ variable "tag" {
   description = "The image tag for the containers"
 }
 
+variable "ocr_worker_tag" {
+  type        = string
+  description = "The image tag for the ocr-worker container"
+}
+
 variable "backend_env" {
   type        = map(any)
   description = "Environment variables for the backend service"

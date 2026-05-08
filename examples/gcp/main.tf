@@ -10,6 +10,7 @@ module "gcp" {
   region                   = local.region
   environment              = local.environment
   tag                      = local.tag
+  ocr_worker_tag           = local.ocr_worker_tag
   backend_env              = local.backend_env
   min_backend_instances    = local.min_backend_instances
   min_frontend_instances   = local.min_frontend_instances

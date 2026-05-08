@@ -67,7 +67,7 @@ resource "google_cloud_run_v2_service" "ocr_worker" {
     service_account = google_service_account.ocr_worker.email
 
     containers {
-      image = "docker.io/ashirt/ocr-worker:${var.tag}"
+      image = "docker.io/ashirt/ocr-worker:${var.ocr_worker_tag}"
 
       env {
         name  = "API_BASE"
