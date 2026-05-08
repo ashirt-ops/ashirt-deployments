@@ -10,7 +10,7 @@ locals {
   }
   min_backend_instances    = 0
   min_frontend_instances   = 0
-  min_ocr_worker_instances = 0
+  min_ocr_worker_instances = 1
   ocr_worker_env = {
     "BACKEND" = "gcp"
   }

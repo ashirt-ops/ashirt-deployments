@@ -63,7 +63,7 @@ variable "min_frontend_instances" {
 variable "min_ocr_worker_instances" {
   type        = number
   description = "The minimum number of ocr-worker instances"
-  default     = 0
+  default     = 1
 }
 
 variable "ocr_worker_access_key" {
