@@ -1,7 +1,7 @@
-resource "google_project_iam_member" "backend-storage-user" {
+resource "google_project_iam_member" "ashirt-server-storage-user" {
   project = var.project
   role    = "roles/storage.objectUser"
-  member  = google_service_account.backend.member
+  member  = google_service_account.ashirt_server.member
 }
 
 resource "google_project_iam_member" "ocr_worker_service_usage" {

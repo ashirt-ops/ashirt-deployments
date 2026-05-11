@@ -5,7 +5,7 @@ resource "google_cloud_run_v2_job" "init_api" {
   location            = var.region
   template {
     template {
-      service_account = google_service_account.backend.email
+      service_account = google_service_account.ashirt_server.email
       containers {
         image = "docker.io/ashirt/init:${var.tag}"
 

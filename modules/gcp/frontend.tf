@@ -25,7 +25,7 @@ resource "google_cloud_run_v2_service" "frontend" {
 
       env {
         name  = "WEB_URL"
-        value = google_cloud_run_v2_service.backend.uri
+        value = google_cloud_run_v2_service.ashirt_server.uri
       }
 
       resources {

@@ -71,7 +71,7 @@ resource "google_cloud_run_v2_service" "ocr_worker" {
 
       env {
         name  = "API_BASE"
-        value = google_cloud_run_v2_service.backend.uri
+        value = google_cloud_run_v2_service.ashirt_server.uri
       }
 
       env {
@@ -129,10 +129,10 @@ resource "google_cloud_run_v2_service" "ocr_worker" {
   }
 }
 
-resource "google_cloud_run_service_iam_member" "ocr_worker_backend_invoker" {
+resource "google_cloud_run_service_iam_member" "ocr_worker_ashirt_server_invoker" {
   location = google_cloud_run_v2_service.ocr_worker.location
   project  = google_cloud_run_v2_service.ocr_worker.project
   service  = google_cloud_run_v2_service.ocr_worker.name
   role     = "roles/run.invoker"
-  member   = google_service_account.backend.member
+  member   = google_service_account.ashirt_server.member
 }

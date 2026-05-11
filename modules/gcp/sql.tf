@@ -78,13 +78,13 @@ resource "google_secret_manager_secret_version" "ashirt" {
   secret_data = "ashirt:${random_password.ashirt_db_password.result}@tcp(${google_sql_database_instance.ashirt.ip_address.0.ip_address}:3306)/ashirt"
 }
 
-resource "google_secret_manager_secret_iam_binding" "backend_sql_secret" {
+resource "google_secret_manager_secret_iam_binding" "ashirt_server_sql_secret" {
   project   = var.project
   secret_id = google_secret_manager_secret.ashirt_dsn.secret_id
   role      = "roles/secretmanager.secretAccessor"
   members = [
     //"serviceAccount:${var.project_id}-compute@developer.gserviceaccount.com",
-    "serviceAccount:${google_service_account.backend.email}",
+    "serviceAccount:${google_service_account.ashirt_server.email}",
   ]
 }
 

@@ -42,14 +42,14 @@ variable "ocr_worker_tag" {
   description = "The image tag for the ocr-worker container"
 }
 
-variable "backend_env" {
+variable "ashirt_server_env" {
   type        = map(any)
-  description = "Environment variables for the backend service"
+  description = "Environment variables for the ashirt-server service"
 }
 
-variable "min_backend_instances" {
+variable "min_ashirt_server_instances" {
   type        = number
-  description = "The minimum number of backend instances"
+  description = "The minimum number of ashirt-server instances"
   default     = 0
 }
 
@@ -68,13 +68,13 @@ variable "min_ocr_worker_instances" {
 
 variable "ocr_worker_access_key" {
   type        = string
-  description = "Access key for the ocr-worker to authenticate against the backend API"
+  description = "Access key for the ocr-worker to authenticate against the ashirt-server API"
   sensitive   = true
 }
 
 variable "ocr_worker_secret_key" {
   type        = string
-  description = "Base64-encoded secret key for the ocr-worker to authenticate against the backend API"
+  description = "Base64-encoded secret key for the ocr-worker to authenticate against the ashirt-server API"
   sensitive   = true
 }
 

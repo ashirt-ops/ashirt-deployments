@@ -1,7 +1,7 @@
-resource "google_service_account" "backend" {
+resource "google_service_account" "ashirt_server" {
   project      = var.project
-  account_id   = "ashirt-backend-${var.environment}"
-  display_name = "ashirt backend ${var.environment}"
+  account_id   = "ashirt-server-${var.environment}"
+  display_name = "ashirt-server ${var.environment}"
 }
 
 resource "random_password" "session_key" {
@@ -9,19 +9,19 @@ resource "random_password" "session_key" {
   special = false
 }
 
-resource "google_cloud_run_v2_service" "backend" {
+resource "google_cloud_run_v2_service" "ashirt_server" {
   project  = var.project
-  name     = "backend-${var.environment}"
+  name     = "ashirt-server-${var.environment}"
   location = var.region
   # TODO: change
   deletion_protection = false
   ingress             = "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"
 
   template {
-    service_account = google_service_account.backend.email
+    service_account = google_service_account.ashirt_server.email
 
     containers {
-      image = "docker.io/ashirt/web:${var.tag}"
+      image = "docker.io/ashirt/ashirt-server:${var.tag}"
 
       env {
         name  = "STORE_TYPE"
@@ -59,7 +59,7 @@ resource "google_cloud_run_v2_service" "backend" {
       }
 
       dynamic "env" {
-        for_each = var.backend_env
+        for_each = var.ashirt_server_env
 
         content {
           name  = env.key
@@ -90,13 +90,13 @@ resource "google_cloud_run_v2_service" "backend" {
   }
 
   scaling {
-    min_instance_count = var.min_backend_instances
+    min_instance_count = var.min_ashirt_server_instances
   }
 }
 
-#resource "google_compute_firewall" "backend_firewall" {
+#resource "google_compute_firewall" "ashirt_server_firewall" {
 #  project = var.project
-#  name    = "ashirt-${var.environment}-backend-firewall"
+#  name    = "ashirt-${var.environment}-ashirt-server-firewall"
 #  network = google_compute_network.vpc_network.id
 #
 #  allow {
@@ -105,24 +105,24 @@ resource "google_cloud_run_v2_service" "backend" {
 #  }
 #
 #  source_ranges = ["0.0.0.0/0"]
-#  target_tags   = ["backend"]
+#  target_tags   = ["ashirt-server"]
 #}
 
-#resource "google_compute_region_network_endpoint_group" "backend" {
+#resource "google_compute_region_network_endpoint_group" "ashirt_server" {
 #  project               = var.project
-#  name                  = "backend"
+#  name                  = "ashirt-server"
 #  network_endpoint_type = "SERVERLESS"
 #  region                = var.region
 #
 #  cloud_run {
-#    service = google_cloud_run_v2_service.backend.name
+#    service = google_cloud_run_v2_service.ashirt_server.name
 #  }
 #}
 
-#module "lb-http-backend" {
+#module "lb-http-ashirt-server" {
 #  source  = "terraform-google-modules/lb-http/google//modules/serverless_negs"
 #  version = "~> 13"
-#  name    = "backend"
+#  name    = "ashirt-server"
 #  project = var.project
 #  ssl     = false
 #  #managed_ssl_certificate_domains = [""]
@@ -133,7 +133,7 @@ resource "google_cloud_run_v2_service" "backend" {
 #      description = null
 #      groups = [
 #        {
-#          group = google_compute_region_network_endpoint_group.backend.id
+#          group = google_compute_region_network_endpoint_group.ashirt_server.id
 #        }
 #      ]
 #
@@ -149,10 +149,10 @@ resource "google_cloud_run_v2_service" "backend" {
 #  }
 #}
 
-resource "google_cloud_run_service_iam_member" "backend_public_access" {
-  location = google_cloud_run_v2_service.backend.location
-  project  = google_cloud_run_v2_service.backend.project
-  service  = google_cloud_run_v2_service.backend.name
+resource "google_cloud_run_service_iam_member" "ashirt_server_public_access" {
+  location = google_cloud_run_v2_service.ashirt_server.location
+  project  = google_cloud_run_v2_service.ashirt_server.project
+  service  = google_cloud_run_v2_service.ashirt_server.name
   role     = "roles/run.invoker"
   member   = "allUsers"
 }
