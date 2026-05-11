@@ -94,11 +94,6 @@ resource "google_cloud_run_v2_service" "ocr_worker" {
         }
       }
 
-      env {
-        name  = "PORT"
-        value = "8080"
-      }
-
       dynamic "env" {
         for_each = var.ocr_worker_env
 
