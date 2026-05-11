@@ -127,6 +127,11 @@ resource "google_cloud_run_v2_service" "ocr_worker" {
   scaling {
     min_instance_count = var.min_ocr_worker_instances
   }
+
+  depends_on = [
+    google_secret_manager_secret_iam_binding.ocr_worker_access_key,
+    google_secret_manager_secret_iam_binding.ocr_worker_secret_key,
+  ]
 }
 
 resource "google_cloud_run_service_iam_member" "ocr_worker_ashirt_server_invoker" {

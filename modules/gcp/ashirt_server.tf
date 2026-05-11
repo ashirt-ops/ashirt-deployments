@@ -92,6 +92,8 @@ resource "google_cloud_run_v2_service" "ashirt_server" {
   scaling {
     min_instance_count = var.min_ashirt_server_instances
   }
+
+  depends_on = [google_secret_manager_secret_iam_binding.ashirt_server_sql_secret]
 }
 
 #resource "google_compute_firewall" "ashirt_server_firewall" {

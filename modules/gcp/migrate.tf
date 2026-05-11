@@ -31,4 +31,6 @@ resource "google_cloud_run_v2_job" "init_api" {
       }
     }
   }
+
+  depends_on = [google_secret_manager_secret_iam_binding.ashirt_server_sql_secret]
 }
