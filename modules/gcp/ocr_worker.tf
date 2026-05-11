@@ -61,7 +61,7 @@ resource "google_cloud_run_v2_service" "ocr_worker" {
   name                = "ocr-worker-${var.environment}"
   location            = var.region
   deletion_protection = false
-  ingress             = "INGRESS_TRAFFIC_INTERNAL_ONLY"
+  ingress             = "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"
 
   template {
     service_account = google_service_account.ocr_worker.email
@@ -140,4 +140,12 @@ resource "google_cloud_run_service_iam_member" "ocr_worker_ashirt_server_invoker
   service  = google_cloud_run_v2_service.ocr_worker.name
   role     = "roles/run.invoker"
   member   = google_service_account.ashirt_server.member
+}
+
+resource "google_cloud_run_service_iam_member" "ocr_worker_public_access" {
+  location = google_cloud_run_v2_service.ocr_worker.location
+  project  = google_cloud_run_v2_service.ocr_worker.project
+  service  = google_cloud_run_v2_service.ocr_worker.name
+  role     = "roles/run.invoker"
+  member   = "allUsers"
 }
