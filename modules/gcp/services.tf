@@ -34,14 +34,8 @@ resource "google_project_service" "vision" {
   disable_on_destroy = false
 }
 
-#resource "google_project_service" "domains" {
-#  project            = var.project
-#  service            = "domains.googleapis.com"
-#  disable_on_destroy = false
-#}
-
-#resource "google_project_service" "domains" {
-#  project            = var.project
-#  service            = "dns.googleapis.com"
-#  disable_on_destroy = false
-#}
+resource "google_project_service" "iap" {
+  project            = var.project
+  service            = "iap.googleapis.com"
+  disable_on_destroy = false
+}

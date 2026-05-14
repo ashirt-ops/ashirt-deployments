@@ -1,3 +1,7 @@
+data "google_project" "this" {
+  project_id = var.project
+}
+
 resource "google_service_account" "frontend" {
   project      = var.project
   account_id   = "ashirt-frontend-${var.environment}"
@@ -54,66 +58,111 @@ resource "google_cloud_run_v2_service" "frontend" {
   }
 }
 
-#resource "google_compute_firewall" "frontend_firewall" {
-#  project = var.project
-#  name    = "ashirt-${var.environment}-frontend-firewall"
-#  network = google_compute_network.vpc_network.id
-#
-#  allow {
-#    protocol = "tcp"
-#    ports    = ["8080"]
-#  }
-#
-#  source_ranges = ["0.0.0.0/0"]
-#  target_tags   = ["frontend"]
-#}
+resource "google_compute_region_network_endpoint_group" "frontend" {
+  project               = var.project
+  name                  = "frontend-${var.environment}"
+  network_endpoint_type = "SERVERLESS"
+  region                = var.region
 
-#module "lb-http-frontend" {
-#  source  = "terraform-google-modules/lb-http/google//modules/serverless_negs"
-#  version = "~> 13"
-#  name    = "frontend"
-#  project = var.project
-#  ssl     = false
-#  #managed_ssl_certificate_domains = [""]
-#  https_redirect = false
-#
-#  backends = {
-#    default = {
-#      description = null
-#      groups = [
-#        {
-#          group = google_compute_region_network_endpoint_group.frontend.id
-#        }
-#      ]
-#
-#      enable_cdn = false
-#
-#      iap_config = {
-#        enable = false
-#      }
-#      log_config = {
-#        enable = false
-#      }
-#    }
-#  }
-#}
+  cloud_run {
+    service = google_cloud_run_v2_service.frontend.name
+  }
+}
 
-#resource "google_compute_region_network_endpoint_group" "frontend" {
-#  project               = var.project
-#  provider              = google
-#  name                  = "frontend"
-#  network_endpoint_type = "SERVERLESS"
-#  region                = var.region
-#
-#  cloud_run {
-#    service = google_cloud_run_v2_service.frontend.name
-#  }
-#}
+module "lb-http-frontend" {
+  source  = "terraform-google-modules/lb-http/google//modules/serverless_negs"
+  version = "~> 14"
+  name    = "frontend-${var.environment}"
+  project = var.project
 
-resource "google_cloud_run_service_iam_member" "frontend_public_access" {
+  ssl                             = true
+  managed_ssl_certificate_domains = [var.frontend_domain]
+  https_redirect                  = true
+
+  create_url_map = false
+  url_map        = google_compute_url_map.frontend.self_link
+
+  backends = {
+    default = {
+      description = null
+      groups = [
+        {
+          group = google_compute_region_network_endpoint_group.frontend.id
+        }
+      ]
+
+      enable_cdn = false
+
+      iap_config = {
+        enable = true
+      }
+      log_config = {
+        enable = false
+      }
+    }
+
+    api = {
+      description = null
+      groups = [
+        {
+          group = google_compute_region_network_endpoint_group.frontend.id
+        }
+      ]
+
+      enable_cdn = false
+
+      iap_config = {
+        enable = false
+      }
+      log_config = {
+        enable = false
+      }
+    }
+  }
+}
+
+resource "google_compute_url_map" "frontend" {
+  project         = var.project
+  name            = "frontend-${var.environment}-url-map"
+  default_service = module.lb-http-frontend.backend_services["default"].self_link
+
+  host_rule {
+    hosts        = [var.frontend_domain]
+    path_matcher = "main"
+  }
+
+  path_matcher {
+    name            = "main"
+    default_service = module.lb-http-frontend.backend_services["default"].self_link
+
+    path_rule {
+      paths   = ["/api", "/api/*"]
+      service = module.lb-http-frontend.backend_services["api"].self_link
+    }
+  }
+}
+
+resource "google_cloud_run_service_iam_member" "frontend_iap_invoker" {
+  location = google_cloud_run_v2_service.frontend.location
+  project  = google_cloud_run_v2_service.frontend.project
+  service  = google_cloud_run_v2_service.frontend.name
+  role     = "roles/run.invoker"
+  member   = "serviceAccount:service-${data.google_project.this.number}@gcp-sa-iap.iam.gserviceaccount.com"
+}
+
+resource "google_cloud_run_service_iam_member" "frontend_api_public_access" {
   location = google_cloud_run_v2_service.frontend.location
   project  = google_cloud_run_v2_service.frontend.project
   service  = google_cloud_run_v2_service.frontend.name
   role     = "roles/run.invoker"
   member   = "allUsers"
+}
+
+resource "google_iap_web_backend_service_iam_binding" "frontend" {
+  project             = var.project
+  web_backend_service = "frontend-${var.environment}-backend-default"
+  role                = "roles/iap.httpsResourceAccessor"
+  members             = var.iap_members
+
+  depends_on = [module.lb-http-frontend]
 }

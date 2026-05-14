@@ -96,61 +96,6 @@ resource "google_cloud_run_v2_service" "ashirt_server" {
   depends_on = [google_secret_manager_secret_iam_binding.ashirt_server_sql_secret]
 }
 
-#resource "google_compute_firewall" "ashirt_server_firewall" {
-#  project = var.project
-#  name    = "ashirt-${var.environment}-ashirt-server-firewall"
-#  network = google_compute_network.vpc_network.id
-#
-#  allow {
-#    protocol = "tcp"
-#    ports    = [8000]
-#  }
-#
-#  source_ranges = ["0.0.0.0/0"]
-#  target_tags   = ["ashirt-server"]
-#}
-
-#resource "google_compute_region_network_endpoint_group" "ashirt_server" {
-#  project               = var.project
-#  name                  = "ashirt-server"
-#  network_endpoint_type = "SERVERLESS"
-#  region                = var.region
-#
-#  cloud_run {
-#    service = google_cloud_run_v2_service.ashirt_server.name
-#  }
-#}
-
-#module "lb-http-ashirt-server" {
-#  source  = "terraform-google-modules/lb-http/google//modules/serverless_negs"
-#  version = "~> 13"
-#  name    = "ashirt-server"
-#  project = var.project
-#  ssl     = false
-#  #managed_ssl_certificate_domains = [""]
-#  https_redirect = false
-#
-#  backends = {
-#    default = {
-#      description = null
-#      groups = [
-#        {
-#          group = google_compute_region_network_endpoint_group.ashirt_server.id
-#        }
-#      ]
-#
-#      enable_cdn = false
-#
-#      iap_config = {
-#        enable = false
-#      }
-#      log_config = {
-#        enable = false
-#      }
-#    }
-#  }
-#}
-
 resource "google_cloud_run_service_iam_member" "ashirt_server_public_access" {
   location = google_cloud_run_v2_service.ashirt_server.location
   project  = google_cloud_run_v2_service.ashirt_server.project

@@ -16,4 +16,6 @@ locals {
   }
   ocr_worker_access_key = ""
   ocr_worker_secret_key = ""
+  frontend_domain       = ""
+  iap_members           = []
 }
