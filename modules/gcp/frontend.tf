@@ -69,6 +69,34 @@ resource "google_compute_region_network_endpoint_group" "frontend" {
   }
 }
 
+locals {
+  frontend_backend_base = {
+    description = null
+    groups = [
+      {
+        group = google_compute_region_network_endpoint_group.frontend.id
+      }
+    ]
+    enable_cdn = false
+    log_config = {
+      enable = false
+    }
+  }
+
+  frontend_backends = var.iap_enabled ? {
+    default = merge(local.frontend_backend_base, {
+      iap_config = { enable = true }
+    })
+    api = merge(local.frontend_backend_base, {
+      iap_config = { enable = false }
+    })
+    } : {
+    default = merge(local.frontend_backend_base, {
+      iap_config = { enable = false }
+    })
+  }
+}
+
 module "lb-http-frontend" {
   source  = "terraform-google-modules/lb-http/google//modules/serverless_negs"
   version = "~> 14"
@@ -79,49 +107,14 @@ module "lb-http-frontend" {
   managed_ssl_certificate_domains = [var.frontend_domain]
   https_redirect                  = true
 
-  create_url_map = false
-  url_map        = google_compute_url_map.frontend.self_link
+  create_url_map = !var.iap_enabled
+  url_map        = var.iap_enabled ? google_compute_url_map.frontend[0].self_link : null
 
-  backends = {
-    default = {
-      description = null
-      groups = [
-        {
-          group = google_compute_region_network_endpoint_group.frontend.id
-        }
-      ]
-
-      enable_cdn = false
-
-      iap_config = {
-        enable = true
-      }
-      log_config = {
-        enable = false
-      }
-    }
-
-    api = {
-      description = null
-      groups = [
-        {
-          group = google_compute_region_network_endpoint_group.frontend.id
-        }
-      ]
-
-      enable_cdn = false
-
-      iap_config = {
-        enable = false
-      }
-      log_config = {
-        enable = false
-      }
-    }
-  }
+  backends = local.frontend_backends
 }
 
 resource "google_compute_url_map" "frontend" {
+  count           = var.iap_enabled ? 1 : 0
   project         = var.project
   name            = "frontend-${var.environment}-url-map"
   default_service = module.lb-http-frontend.backend_services["default"].self_link
@@ -143,6 +136,7 @@ resource "google_compute_url_map" "frontend" {
 }
 
 resource "google_cloud_run_service_iam_member" "frontend_iap_invoker" {
+  count    = var.iap_enabled ? 1 : 0
   location = google_cloud_run_v2_service.frontend.location
   project  = google_cloud_run_v2_service.frontend.project
   service  = google_cloud_run_v2_service.frontend.name
@@ -150,7 +144,7 @@ resource "google_cloud_run_service_iam_member" "frontend_iap_invoker" {
   member   = "serviceAccount:service-${data.google_project.this.number}@gcp-sa-iap.iam.gserviceaccount.com"
 }
 
-resource "google_cloud_run_service_iam_member" "frontend_api_public_access" {
+resource "google_cloud_run_service_iam_member" "frontend_public_access" {
   location = google_cloud_run_v2_service.frontend.location
   project  = google_cloud_run_v2_service.frontend.project
   service  = google_cloud_run_v2_service.frontend.name
@@ -159,6 +153,7 @@ resource "google_cloud_run_service_iam_member" "frontend_api_public_access" {
 }
 
 resource "google_iap_web_backend_service_iam_binding" "frontend" {
+  count               = var.iap_enabled ? 1 : 0
   project             = var.project
   web_backend_service = "frontend-${var.environment}-backend-default"
   role                = "roles/iap.httpsResourceAccessor"

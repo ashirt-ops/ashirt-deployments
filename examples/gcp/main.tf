@@ -19,5 +19,6 @@ module "gcp" {
   ocr_worker_access_key       = local.ocr_worker_access_key
   ocr_worker_secret_key       = local.ocr_worker_secret_key
   frontend_domain             = local.frontend_domain
+  iap_enabled                 = local.iap_enabled
   iap_members                 = local.iap_members
 }

@@ -89,8 +89,14 @@ variable "frontend_domain" {
   description = "The fully-qualified hostname for the frontend (used for the Google-managed SSL certificate and IAP)"
 }
 
+variable "iap_enabled" {
+  type        = bool
+  description = "Whether to enable IAP on the frontend load balancer. When true, non-/api traffic is gated by IAP and /api/* bypasses IAP for API clients. When false, all traffic is served unauthenticated at the LB (ashirt-server's own auth remains)."
+  default     = false
+}
+
 variable "iap_members" {
   type        = list(string)
-  description = "IAM members granted roles/iap.httpsResourceAccessor on the frontend backend service (e.g. user:foo@example.com, group:eng@example.com, domain:example.com)"
+  description = "IAM members granted roles/iap.httpsResourceAccessor on the frontend backend service when iap_enabled = true (e.g. user:foo@example.com, group:eng@example.com, domain:example.com)"
   default     = []
 }
