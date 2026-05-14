@@ -1,7 +1,3 @@
-data "google_project" "this" {
-  project_id = var.project
-}
-
 resource "google_service_account" "frontend" {
   project      = var.project
   account_id   = "ashirt-frontend-${var.environment}"
@@ -135,13 +131,22 @@ resource "google_compute_url_map" "frontend" {
   }
 }
 
+resource "google_project_service_identity" "iap" {
+  count    = var.iap_enabled ? 1 : 0
+  provider = google-beta
+  project  = var.project
+  service  = "iap.googleapis.com"
+
+  depends_on = [google_project_service.iap]
+}
+
 resource "google_cloud_run_service_iam_member" "frontend_iap_invoker" {
   count    = var.iap_enabled ? 1 : 0
   location = google_cloud_run_v2_service.frontend.location
   project  = google_cloud_run_v2_service.frontend.project
   service  = google_cloud_run_v2_service.frontend.name
   role     = "roles/run.invoker"
-  member   = "serviceAccount:service-${data.google_project.this.number}@gcp-sa-iap.iam.gserviceaccount.com"
+  member   = "serviceAccount:${google_project_service_identity.iap[0].email}"
 }
 
 resource "google_cloud_run_service_iam_member" "frontend_public_access" {
