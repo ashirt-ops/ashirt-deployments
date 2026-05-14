@@ -137,7 +137,7 @@ resource "google_project_service_identity" "iap" {
   project  = var.project
   service  = "iap.googleapis.com"
 
-  depends_on = [google_project_service.iap]
+  depends_on = [time_sleep.wait_for_services]
 }
 
 resource "google_cloud_run_service_iam_member" "frontend_iap_invoker" {

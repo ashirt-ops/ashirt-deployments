@@ -8,4 +8,6 @@ resource "google_storage_bucket" "ashirt_storage" {
   name          = "ashirt-storage-${random_string.bucket_suffix.result}"
   location      = var.region
   force_destroy = true
+
+  depends_on = [time_sleep.wait_for_services]
 }

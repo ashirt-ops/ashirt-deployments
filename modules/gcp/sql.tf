@@ -71,6 +71,8 @@ resource "google_secret_manager_secret" "ashirt_dsn" {
   replication {
     auto {}
   }
+
+  depends_on = [time_sleep.wait_for_services]
 }
 
 resource "google_secret_manager_secret_version" "ashirt" {

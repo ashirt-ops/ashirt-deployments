@@ -2,6 +2,8 @@ resource "google_compute_network" "vpc_network" {
   project                 = var.project
   name                    = "ashirt-${var.environment}-vpc"
   auto_create_subnetworks = false
+
+  depends_on = [time_sleep.wait_for_services]
 }
 
 resource "google_compute_subnetwork" "subnet" {

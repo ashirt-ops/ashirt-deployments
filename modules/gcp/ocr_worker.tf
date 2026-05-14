@@ -14,6 +14,8 @@ resource "google_secret_manager_secret" "ocr_worker_access_key" {
   replication {
     auto {}
   }
+
+  depends_on = [time_sleep.wait_for_services]
 }
 
 resource "google_secret_manager_secret_version" "ocr_worker_access_key" {
@@ -31,6 +33,8 @@ resource "google_secret_manager_secret" "ocr_worker_secret_key" {
   replication {
     auto {}
   }
+
+  depends_on = [time_sleep.wait_for_services]
 }
 
 resource "google_secret_manager_secret_version" "ocr_worker_secret_key" {
