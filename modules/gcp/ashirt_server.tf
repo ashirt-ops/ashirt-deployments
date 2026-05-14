@@ -93,7 +93,10 @@ resource "google_cloud_run_v2_service" "ashirt_server" {
     min_instance_count = var.min_ashirt_server_instances
   }
 
-  depends_on = [google_secret_manager_secret_iam_binding.ashirt_server_sql_secret]
+  depends_on = [
+    google_secret_manager_secret_iam_binding.ashirt_server_sql_secret,
+    google_secret_manager_secret_version.ashirt,
+  ]
 }
 
 resource "google_cloud_run_service_iam_member" "ashirt_server_public_access" {
