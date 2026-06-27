@@ -1,9 +1,5 @@
 # ashirt-deployments
 
-⚠️ **Under Construction** ⚠️
-
-**NOTE:** This repository is currently being rewritten to support new recommended deployment schemes that should be ideal for most uses. The GCP version is ready for testing with some additional changes planned, the AWS one will be updated shortly.
-
 Terraform configurations for deploying ASHIRT
 
 ## Design Choices
