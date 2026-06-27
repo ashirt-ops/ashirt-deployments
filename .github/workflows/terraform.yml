@@ -1,0 +1,57 @@
+name: Terraform
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  # Formatting is checked once at the repo root so it also covers any
+  # configuration outside the matrix below.
+  fmt:
+    name: fmt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - name: terraform fmt
+        run: terraform fmt -check -recursive
+
+  # init + validate is the credential-free equivalent of a plan check: it
+  # resolves providers/modules and type-checks every resource without touching
+  # a cloud account. A real `terraform plan` is intentionally not run here, as
+  # it would require AWS/GCP credentials and a live target (e.g. an existing
+  # Route53 hosted zone for var.domain).
+  validate:
+    name: validate (${{ matrix.dir }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        dir:
+          - modules/aws
+          - modules/gcp
+          - examples/aws
+          - examples/gcp
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+
+      # The examples consume the module via `source =
+      # "./ashirt-deployments/modules/<cloud>"`, which in real use is a
+      # submodule. Recreate that path with a symlink to the repo root so the
+      # example resolves against this checkout.
+      - name: Link module source path (examples)
+        if: startsWith(matrix.dir, 'examples/')
+        run: ln -sfn "$GITHUB_WORKSPACE" "${{ matrix.dir }}/ashirt-deployments"
+
+      - name: terraform init
+        run: terraform init -backend=false -input=false
+        working-directory: ${{ matrix.dir }}
+
+      - name: terraform validate
+        run: terraform validate
+        working-directory: ${{ matrix.dir }}
