@@ -1,9 +1,5 @@
 # ashirt-deployments
 
-⚠️ **Under Construction** ⚠️
-
-**NOTE:** This repository is currently being rewritten to support new recommended deployment schemes that should be ideal for most uses. Both the GCP (Cloud Run) and AWS (ECS Fargate) versions are ready for testing, with some additional changes planned.
-
 Terraform configurations for deploying ASHIRT
 
 ## Design Choices
